@@ -10,6 +10,7 @@ parser$add_argument("-s", "--scaff", type="character", help="sorted .sizes file"
 parser$add_argument("-c", "--contig", type="character", help="sorted .sizes file", default=NULL)
 parser$add_argument("-o", "--out", type="character", help="output prefix (required) [default %(default)s]", default="out")
 parser$add_argument("-g", "--gsize", type="integer", default=0, help="genome size for computing NG* (optional)")
+parser$add_argument("-m", "--ymax", type="double", default=0, help="maximum Y scale, auto detect max if 0 [default %(default)s]")
 parser$add_argument("-x", "--xdim", type="double", default=6, help="width of plot [default %(default)s]")
 parser$add_argument("-y", "--ydim", type="double", default=5, help="height of plot [default %(default)s]")
 parser$add_argument("-p", "--pdf", dest='pdf', default=FALSE, action='store_true', help="set to get output in .pdf. [default .png]")
@@ -64,9 +65,13 @@ bind_blocks <- function(block, block_dummy, scaff, scaff_dummy, contig, contig_d
   return(blocks)
 }
 
-plot_block <- function(dat = NULL, stats) {
+plot_block <- function(dat = NULL, stats, ymax) {
   # by phased block
-  y_max=max(dat$Size)
+  if (ymax == 0) {
+    y_max = max(dat$Size)
+  } else {
+    y_max = ymax
+  }
   ggplot(data = dat, aes(x = dat[,5], y = dat[,3], fill = dat[,2], colour = dat[,2])) +
     geom_rect(xmin=dat[,6], xmax=dat[,5], ymin=0, ymax=dat[,3], alpha=0.7) +
     theme_bw() +
@@ -85,7 +90,7 @@ plot_block <- function(dat = NULL, stats) {
     geom_vline(xintercept = 50, show.legend = FALSE, linetype="dashed", color="black")
 }
 
-block_n <- function(block=NULL, scaff=NULL, contig=NULL, out, gsize = 0, w = 6, h = 5, pdf=FALSE) {
+block_n <- function(block=NULL, scaff=NULL, contig=NULL, out, gsize = 0, ymax = 0, w = 6, h = 5, pdf=FALSE) {
   
   outformat="png"
   if (pdf) {
@@ -114,11 +119,15 @@ block_n <- function(block=NULL, scaff=NULL, contig=NULL, out, gsize = 0, w = 6, 
   }
 
   # Plot phase blocks filled by haplotypes
-  plot_block(block, stats)
+  plot_block(block, stats, ymax)
   save_plot(out, "block", stats, outformat, h = h, w = w)
   
   dat = bind_blocks(block, block_dummy, scaff, scaff_dummy, contig, contig_dummy)
-  y_max=max(dat$Size)
+  if ( ymax == 0) {
+    y_max=max(dat$Size)
+  } else {
+    y_max=ymax
+  }
   
   ggplot(data = dat, aes(x = N2, y = Size, colour = Type)) +
     geom_step() +
@@ -140,5 +149,5 @@ block_n <- function(block=NULL, scaff=NULL, contig=NULL, out, gsize = 0, w = 6, 
   save_plot(out, "continuity", stats, outformat, h = h, w = w)
 }
 
-block_n(block = args$block, scaff = args$scaff, contig = args$contig, out = args$out, gsize = args$gsize, w = args$xdim, h = args$ydim, pdf = args$pdf)
+block_n(block = args$block, scaff = args$scaff, contig = args$contig, out = args$out, gsize = args$gsize, ymax = args$ymax, w = args$xdim, h = args$ydim, pdf = args$pdf)
 
