@@ -41,7 +41,7 @@ plot_mappability <- function(dat, x_label) {
   ggplot(dat, aes(x=Stat, y=Percent, fill=Assembly)) + 
     geom_bar(stat="identity", color="black", 
              position=position_dodge()) +
-    geom_errorbar(aes(ymin=Percent-sd, ymax=Percent+sd), width=.2,
+    geom_errorbar(aes(ymin=Percent-sem, ymax=Percent+sem), width=.2,
                   position=position_dodge(.9)) +
     ylab("Avg. Reads Mapped (%)") +
     xlab(x_label) +
