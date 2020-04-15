@@ -1,5 +1,5 @@
-# RFactory
-Pile of codes using R
+# Scratch
+Pile of codes for generating reproducable figures and analysis results.
 
 Each directory is a project and consists of
 
