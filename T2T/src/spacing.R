@@ -2,13 +2,15 @@ library(ggplot2)
 library(scales)
 
 getwd()
-setwd("./T2T")
+setwd("../T2T")
 greenPalette=c("#CCFFCC", "#009E50")
 dat=read.table("input/markers.dxz1.dat", header=T)
 head(dat)
 max(dat$Spacing)
+summary(dat[dat$Category == "DXZ1",]$Spacing)
+
 #levels=levels(dat$Category)[c(2,1)]
-dat$Category=factor(dat$Category, levels=levels(dat$Category)[c(2,1)])
+dat$Category=factor(dat$Category, levels=levels(dat$Category)[c(1,2)])
 ggplot(data = dat, aes(x=Spacing, fill=Category)) + 
   scale_fill_manual(values = greenPalette) +
   geom_density(alpha=0.7) +
