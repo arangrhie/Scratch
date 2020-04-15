@@ -4,7 +4,8 @@ install.packages("rgeos", repos="http://R-Forge.R-project.org", type="source")
 install.packages("ggplot2", dependencies = TRUE, type="source")
 install.packages("argparser")
 install.packages("ggridges", dependencies = TRUE, type="source")
-
+install.packages("ggpubr", dependencies = TRUE)
+library(cowplot)
 
 
 .libPaths(c(Sys.getenv('R_LIBS'), .libPaths()))
