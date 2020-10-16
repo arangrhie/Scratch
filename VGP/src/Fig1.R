@@ -5,6 +5,7 @@ library(gridExtra)
 
 getwd()
 setwd("../VGP")
+setwd("VGP")
 
 ## Fig. 1 Scaffolding strategy stats summary
 
@@ -107,3 +108,50 @@ ggplot(dat, aes(x = AssembledChrSize, y = KaryotypeSize)) +
 fit=lm(KaryotypeSize ~ AssembledChrSize, data = dat)
 summary(fit)
 ggsave("output/Fig1_karyotype.png", width = 3, height = 3)
+
+fancy_scientific <- function(d) {
+  # turn in to character string in scientific notation
+  d <- format(d, scientific = TRUE)
+  # quote the part before the exponent to keep all the digits and turn the 'e+' into 10^ format
+  d <- gsub("^(.*)e\\+", "'\\1'%*%10^", d)
+  # convert 0x10^00 to 0
+  d <- gsub("\\'0[\\.0]*\\'(.*)", "'0'", d)
+  # return this as an expression
+  parse(text=d)
+}
+
+W=dat[dat$Chromosome=="W",]
+W
+
+Z=dat[dat$Chromosome=="Z",]
+Z
+
+
+ggplot(dat, aes(x = AssembledChrSize, y = KaryotypeSize)) +
+  geom_smooth(method='lm', se=F, color = "grey", size = 0.5) +
+  geom_point(size=0.5) + theme_classic() + 
+  geom_point(data = Z, size=0.6, color = "red") +
+  geom_point(data = W, size=0.6, color = "orange") +
+  scale_x_log10(expand = c(0, 0.05), limits=c(1.5, 210),
+                breaks = c(3, 10, 30, 100)) +
+  scale_y_log10(expand = c(0, 0.05), limits=c(1.5, 210),
+                breaks = c(3, 10, 30, 100)) +
+  xlab("Assembled Chr. Size (Mb)") + ylab("Karyotype Size (Mb)") +
+  theme(axis.title = element_blank(),
+        axis.text  = element_text(size=6, family = "Arial"))
+ggsave("output/Fig1_karyotype_loglog.png", width = 1.5, height = 1.5)
+
+ggplot(dat, aes(x = AssembledChrSize, y = KaryotypeSize)) +
+  geom_smooth(method='lm', se=F, color = "grey") +
+  geom_point() + theme_classic() + 
+  scale_x_log10(expand = c(0, 0.05), limits=c(1.5, 210),
+                breaks = c(3, 10, 30, 100)) +
+  scale_y_log10(expand = c(0, 0.05), limits=c(1.5, 210),
+                breaks = c(3, 10, 30, 100)) +
+  xlab("Assembled Chr. Size (Mb)") + ylab("Karyotype Size (Mb)") +
+  theme(axis.title = element_blank(),
+        axis.text  = element_text(size=12, family = "Arial"))
+ggsave("output/Fig1_karyotype_loglog_small.png", width = 1.5, height = 1.5)
+
+breaks = trans_breaks("log10", function(x) 10^x)
+labels = trans_format("log10", math_format(10^.x))
