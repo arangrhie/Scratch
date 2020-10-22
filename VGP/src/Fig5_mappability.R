@@ -9,7 +9,7 @@ gray = "#EEEEEE"
 black = "#808080"
 my_col = c(gray, black)
 
-dat = read.table("input/mappability.tab", header=T)
+dat = read.table("input/Fig5_mappability.tab", header=T)
 head(dat)
 
 dat$Assembly = factor(dat$Assembly, levels = unique(dat$Assembly), labels = c("Taeniopygia_guttata-3.2.4", "bTaeGut1_v1.p"))
@@ -58,4 +58,4 @@ plot_mappability <- function(dat, x_label) {
 a <- plot_mappability(rna_dat, "RNA-Seq")
 b <- plot_mappability(atac_dat, "ATAC-Seq")
 g <- arrangeGrob(legend, a, b, nrow = 1)
-ggsave(file = "output/mappability.png", width = 8, height = 2.5, g)
+ggsave(file = "output/Fig5_mappability.png", width = 8, height = 2.5, g)
