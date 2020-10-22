@@ -100,11 +100,11 @@ gene_body_plot <- ggplot(genic_df, aes(x =numeric_position, y = GC_mean, color=c
     geom_vline(xintercept = 2.5, linetype="dashed", color = "grey", size=0.1) +
     geom_vline(xintercept = 3.5, linetype="dashed", color = "grey", size=0.1) +
     geom_vline(xintercept = 4.5, linetype="dashed", color = "grey", size=0.1) +
-    geom_vline(xintercept = 1, linetype="solid", color = "#5e5e5e", size=0.1) +
-    geom_vline(xintercept = 2, linetype="solid", color = "#5e5e5e", size=0.1) +
-    geom_vline(xintercept = 3, linetype="solid", color = "#5e5e5e", size=0.1) +
-    geom_vline(xintercept = 4, linetype="solid", color = "#5e5e5e", size=0.1) +
-    geom_vline(xintercept = 5, linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 1,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 2,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 3,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 4,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 5,   linetype="solid", color = "#5e5e5e", size=0.1) +
     geom_line(aes(group=interaction(type,clade), linetype = type), lwd=0.5) +
     geom_point(aes(group=interaction(type,clade), shape = type), size=0.5) +
     geom_errorbar(aes(ymin=GC_mean-GC_se,ymax=GC_mean+GC_se, color=clade, group=interaction(type,clade), linetype = type), width=0.1, alpha=0.5) +
