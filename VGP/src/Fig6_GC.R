@@ -24,12 +24,14 @@ setwd(dir_with_rscript)
 ################################################################
 ########### [1. GC content of all VGP species ] ################
 ################################################################
-summary_df <- read.csv("./input/Fig7/clade_GC_content/forR.gc.clade.tsv", sep="\t")
+summary_df <- read.csv("./input/Fig6/clade_GC_content/forR.gc.clade.tsv", sep="\t")
 summary_df$GC_mean = summary_df$GC_mean*100
 summary_df$GC_se = summary_df$GC_se * 100
 
+head(summary_df)
 
-vertebrate_clade <- c("bird", "mammal", "reptile", "skate", "amphibian", "fish")
+vertebrate_clade <- c("Bird", "Mammal", "Reptile", "Skate", "Amphibian", "Fish")
+my_col=c("#d73027", "#fc8d59", "#fee090", "#762a83", "#1b7837", "#4575b4")
 exon_order <- c("UTR5", "FirstCDS",  "InternalCDS", "LastCDS", "UTR3")
 intron_order <- c("5'UTR-intron","First-intron","Internal-intron", "Last-intron","3'UTR-intron")
 
@@ -59,16 +61,16 @@ intron_df <-summary_df %>%
 intron_df$numeric_position <- as.numeric(factor(intron_df$position, level=intron_order))
 intron_df$clade <- factor(intron_df$clade, level=vertebrate_clade)
 intron_df$numeric_position <- ifelse(intron_df$numeric_position == 1, 1.5, # 5'UTR Intron
-                                     ifelse(intron_df$numeric_position == 2, 2.5, # First Intron
-                                            ifelse(intron_df$numeric_position == 3, 3, # Internal Intron
-                                                   ifelse(intron_df$numeric_position == 4, 3.5, # Last Intron
-                                                          ifelse(intron_df$numeric_position == 5,4.5, 100))))) # 3'UTR Intron
+                              ifelse(intron_df$numeric_position == 2, 2.5, # First Intron
+                              ifelse(intron_df$numeric_position == 3, 3, # Internal Intron
+                              ifelse(intron_df$numeric_position == 4, 3.5, # Last Intron
+                              ifelse(intron_df$numeric_position == 5, 4.5, 100))))) # 3'UTR Intron
 
 # (1-3) Merge exon and intron dataframes
-exon_df$type <- "exon"
-intron_df$type <- "intron"
+exon_df$type <- "Exon"
+intron_df$type <- "Intron"
 genic_df <- rbind(exon_df, intron_df)
-genic_df$type <- factor(genic_df$type, level=c("exon","intron"))
+genic_df$type <- factor(genic_df$type, level=c("Exon","Intron"))
 
 
 ###############################################################
@@ -81,7 +83,7 @@ up_30kb_df <- summary_df %>%
     filter(position %in% up_30Kb_order)
 up_30kb_df$numeric_position <- as.numeric(factor(up_30kb_df$position, level=up_30Kb_order))
 up_30kb_df$clade <- factor(up_30kb_df$clade, level=vertebrate_clade)
-up_30kb_labels <- c("-0","-10","-20","-30  ")
+up_30kb_labels <- c("-0","-10"," -20","-30 ")
 
 # (2-2) Downstream 
 
@@ -89,8 +91,10 @@ down_30kb_df <- summary_df %>%
     filter(position %in% down_30kb_order)
 down_30kb_df$numeric_position <- as.numeric(factor(down_30kb_df$position, level=down_30kb_order))
 down_30kb_df$clade <- factor(down_30kb_df$clade, level=vertebrate_clade)
-down_30kb_labels <- c("+0","+10","+20", "  +30")
+down_30kb_labels <- c("+0","+10","+20  ", " +30")
 
+
+head(genic_df)
 ###############################################################
 #### [ 1.GC content of all VGP species- 3. Drawing plots ] ####
 ###############################################################
@@ -105,93 +109,93 @@ gene_body_plot <- ggplot(genic_df, aes(x =numeric_position, y = GC_mean, color=c
     geom_vline(xintercept = 3,   linetype="solid", color = "#5e5e5e", size=0.1) +
     geom_vline(xintercept = 4,   linetype="solid", color = "#5e5e5e", size=0.1) +
     geom_vline(xintercept = 5,   linetype="solid", color = "#5e5e5e", size=0.1) +
-    geom_line(aes(group=interaction(type,clade), linetype = type), lwd=0.5) +
-    geom_point(aes(group=interaction(type,clade), shape = type), size=0.5) +
-    geom_errorbar(aes(ymin=GC_mean-GC_se,ymax=GC_mean+GC_se, color=clade, group=interaction(type,clade), linetype = type), width=0.1, alpha=0.5) +
-    scale_x_continuous(name="Intron", breaks = c(1.5, 2.5, 3, 3.5, 4.5), labels=c("5'UTR", "First   ", "Internal", "   Last", "3'UTR"),
-                       sec.axis=sec_axis(~. + 0, name="Exon", breaks = c(1,2,3,4,5), labels=c("5'UTR", "First", "Internal", "Last", "3'UTR"))) + 
+    geom_line(aes(group=interaction(type,clade), linetype = type), lwd=0.3) +
+    geom_point(aes(group=interaction(type,clade), shape = type), size=0.4) +
+    geom_errorbar(aes(ymin=GC_mean-GC_se,ymax=GC_mean+GC_se, color=clade, group=interaction(type,clade), linetype = type), width=0.1, alpha=0.7) +
+    scale_x_continuous(name="Intron", breaks = c(1.5, 2.5, 3, 3.5, 4.5), labels=c("5'UTR", "First", " ", "Last", "3'UTR"),
+                       sec.axis=sec_axis(~. + 0, name="Exon", breaks = c(1,2,3,4,5), labels=c("5'UTR", "First", "Internal", "Last", "3'UTR  "))) + 
     scale_y_continuous(breaks = c(40, 50, 60, 70))+
-    scale_shape_manual(values=c(19,1), labels=c("Exon or upstream/downstream sequence", "Intron"))+
-    scale_linetype(labels=c("Exon or upstream/downstream sequence", "Intron"))+
-    scale_color_discrete(labels=c("Bird", "Mammal", "Reptile", "Skate", "Amphibian", "Fish"))+
-    coord_cartesian(ylim=c(35,75), xlim=c(0.75,5.25), expand=FALSE)+#, expand=FALSE)+#coord_cartesian(ylim=c(30,75), expand=FALSE)+
-    labs(color="Clade", title = "Gene body", linetype="Type", shape="Type") + 
+    scale_shape_manual(values=c(19,1), labels=c("Exon or Up/Downstream", "Intron"))+
+    scale_linetype(labels=c("Exon or Up/Downstream", "Intron"))+
+    scale_color_manual(values = my_col) +
+    coord_cartesian(ylim=c(35,75), xlim=c(0.75,5.25), expand=FALSE)+
+    labs(color="Clade", title = "Gene Body", linetype="Type", shape="Type") + 
     theme_pubr() +
-    theme(plot.title = element_text(size=8,face='bold'),
+    theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
           strip.text = element_blank(),
           strip.background = element_blank(),
           axis.line = element_line(size=0.1),
-          legend.direction = "horizontal",
           legend.position = "bottom",
-          #legend.key.width = unit(1.5,"cm"),
+          legend.key.size = unit(3, "mm"),
           legend.text = element_text(size=6),
           legend.title = element_text(size=6),
+          legend.margin=margin(c(0,0,0,0)),
           axis.text.y = element_text(size=6),
           axis.text.x =  element_text(size=6,hjust=0.5,vjust=0.4),
-          plot.margin = margin(t = 0, r = 0.5, b = 8, l = 0, unit = "pt"),
+          plot.margin = margin(t = 1, r = 1, b = 8, l = 1, unit = "pt"),
           axis.ticks = element_line(size=0.1),
-          #axis.ticks.length = unit(0.05, "cm"),
           axis.title = element_text(size=6, face='bold')) +     
-    guides(linetype=guide_legend(nrow = 2),
-           shape=guide_legend(nrow = 2),
-           color = guide_legend(nrow = 2))
+    guides(linetype=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+           shape=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+           color = guide_legend(nrow = 2, keyheight = unit(3, "mm")))
 gene_body_plot
 
+head(up_30kb_df)
+tail(up_30kb_df)
+
 # (3-2) upstream 30Kbp plot
-up30_plot <- ggplot(up_30kb_df, aes(x =numeric_position, y = GC_mean, color=clade)) +
-    geom_line(aes(group=clade), lwd=0.5) +
-    geom_point(aes(group=clade), size=0.5) +
+up30_plot <- ggplot(up_30kb_df, aes(x = numeric_position, y = GC_mean, color=clade)) +
+    geom_line(aes(group=clade), lwd=0.3, alpha=0.7) +
+    geom_point(aes(group=clade), size=0.4, alpha=0.7) +
     geom_errorbar(aes(ymin=GC_mean-GC_se,ymax=GC_mean+GC_se, color=clade), width=0.06, alpha=0.3, size=0.5) +
-    scale_x_continuous(breaks=c(1,100,200,300), labels=up_30kb_labels, name="(Kbp)", trans=reverselog_trans(10),
+    scale_x_continuous(breaks=c(1,100,200,300), labels=up_30kb_labels, trans=reverselog_trans(10), name="",
                        sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
     scale_y_continuous(breaks = c(40, 50, 60, 70))+
-    coord_cartesian(ylim=c(35,75), expand=TRUE)+
-    # labs(color="Clade", title="Upstream", x="(Kbp)") + 
+    coord_cartesian(ylim=c(35,75), xlim = c(350, 0.8), expand=FALSE)+
+    labs(color="Clade", title="Upstream") + 
+    scale_color_manual(values = my_col) +
     theme_pubr()+
-    theme(plot.title = element_text(size=8,face='bold'),
+    theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
           strip.text = element_blank(),
           strip.background = element_blank(),
           axis.line = element_line(size=0.1),
-          legend.direction = "horizontal",
           legend.position = "bottom",
-          legend.key.width = unit(1.5,"cm"),
+          legend.key.width = unit(3,"mm"),
           legend.text = element_text(size=6),
           legend.title = element_text(size=6),
           axis.text.y = element_text(size=6),
           axis.text.x =  element_text(size=6,hjust=0.5),
-          plot.margin = margin(t = 0, r = 0.5, b = 8, l = 0, unit = "pt"),
+          plot.margin = margin(t = 1, r = 1, b = 8, l = 1, unit = "pt"),
           axis.ticks = element_line(size=0.1),
-          #axis.ticks.length = unit(0.05, "cm"),
           axis.title = element_text(size=6, face='bold'),
           axis.title.x = element_text(size=6, face='bold', hjust=1)) +
     guides(color = guide_legend(nrow = 1))
 up30_plot
 
 # (3-3) downstream 30Kbp plot
-down30_plot <- ggplot(down_30kb_df, aes(x =numeric_position, y = GC_mean, color=clade)) +
-    geom_line(aes(group=clade), lwd=0.5) +
-    geom_point(aes(group=clade), size=0.5) +
+down30_plot <- ggplot(down_30kb_df, aes(x = numeric_position, y = GC_mean, color=clade)) +
+    geom_line(aes(group=clade), lwd=0.3) +
+    geom_point(aes(group=clade), size=0.4) +
     geom_errorbar(aes(ymin=GC_mean-GC_se,ymax=GC_mean+GC_se, color=clade), width=0.06, alpha=0.3, size=0.5) +
-    scale_x_log10(breaks=c(1,100,200,300), labels=down_30kb_labels, name="(Kbp)",#Downstream (Kbp)",
+    scale_x_log10(breaks=c(1,100,200,300), labels=down_30kb_labels, name="(kbp)",#Downstream (Kbp)",
                   sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
     scale_y_continuous(breaks = c(40, 50, 60, 70))+
-    coord_cartesian(ylim=c(35,75), expand=TRUE)+
-    # labs(color="Clade", title="Downstream", x="(Kbp)") + 
+    coord_cartesian(ylim=c(35,75), xlim = c(0.8, 350), expand=FALSE)+
+    labs(color="Clade", title="Downstream", x="(kbp)") + 
+    scale_color_manual(values = my_col) +
     theme_pubr()+
-    theme(plot.title = element_text(size=8,face='bold'),
+    theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
           strip.text = element_blank(),
           strip.background = element_blank(),
           axis.line = element_line(size=0.1),
-          legend.direction = "horizontal",
           legend.position = "bottom",
-          legend.key.width = unit(1.5,"cm"),
+          legend.key.width = unit(3,"mm"),
           legend.text = element_text(size=6),
           legend.title = element_text(size=6),
           axis.text.y = element_text(size=6),
           axis.text.x =  element_text(size=6,hjust=0.5),
-          plot.margin = margin(t = 0, r = 4, b = 8, l = 0, unit = "pt"),
+          plot.margin = margin(t = 1, r = 4, b = 8, l = 1, unit = "pt"),
           axis.ticks = element_line(size=0.1),
-          #axis.ticks.length = unit(0.05, "cm"),
           axis.title = element_text(size=6, face='bold'),
           axis.title.x = element_text(size=6, face='bold', hjust=1)) +
     guides(color = guide_legend(nrow = 1))
@@ -210,12 +214,13 @@ clade_gc_plot <- arrangeGrob(up30_plot + theme(legend.position="none", axis.titl
                                                    c(1,2,3),
                                                    c(1,2,3),
                                                    c(1,2,3),
+                                                   c(1,2,3),
+                                                   c(1,2,3),
+                                                   c(1,2,3),
+                                                   c(1,2,3),
                                                    c(4,4,4)),
-                             left = textGrob("GC content (%)", rot = 90, vjust = 1, gp = gpar(cex = 0.5, fontface = "bold"))) 
-#legend, 
-#nrow=2,heights=c(10, 1))
-out_png_file <- paste0("./output/Fig7_gc_content_by_clades.png")
-ggsave(out_png_file, clade_gc_plot, width=5, height=2.5,units = "in")
+                             left = textGrob("GC Content (%)", rot = 90, vjust = 1, gp = gpar(cex = 0.5, fontface = "bold")))
+ggsave("output/Fig6_gc_content_by_clades.png", clade_gc_plot, width=6, height=2.5, units = "in")
 
 ###############################################################
 ################ [ 2. GC & missing ratio ] ####################
@@ -237,19 +242,210 @@ for (i in c(1:20)) {
 ####### [ 2. GC & missing ratio - 1. Preparing data ] #########
 ###############################################################
 
-zebrafinch_aln_ratio_df <- read.csv("./input/missing/bTaeGut1.forR.gc_and_aln.tsv", sep="\t")
-platypus_aln_ratio_df <- read.csv("./input/missing/mOrnAna1.forR.gc_and_aln.tsv", sep="\t")
-anna_aln_ratio_df <- read.csv("./input/missing/bCalAnn1.forR.gc_and_aln.tsv", sep="\t")
-climbingperch_aln_ratio_df <- read.csv("./input/missing/fAnaTes1.2.forR.gc_and_aln.tsv", sep="\t")
+zebrafinch_aln_ratio_df <- read.csv("input/Fig6/missing/bTaeGut1.forR.gc_and_aln.tsv", sep="\t")
+platypus_aln_ratio_df <- read.csv("input/Fig6/missing/mOrnAna1.forR.gc_and_aln.tsv", sep="\t")
+anna_aln_ratio_df <- read.csv("input/Fig6/missing/bCalAnn1.forR.gc_and_aln.tsv", sep="\t")
+climbingperch_aln_ratio_df <- read.csv("input/Fig6/missing/fAnaTes1.2.forR.gc_and_aln.tsv", sep="\t")
 
+anna_aln_ratio_df$species <- "Anna's hummingbird"
 zebrafinch_aln_ratio_df$species <- "Zebra finch"
 platypus_aln_ratio_df$species <- "Platypus"
-anna_aln_ratio_df$species <- "Anna's hummingbird"
 climbingperch_aln_ratio_df$species <- "Climbing perch"
+species_order=c("Anna's hummingbird", "Zebra finch", "Platypus", "Climbing perch")
+my_col=c("#d7191c", "#d01c8b", "#fc8d59", "#4575b4")
+
+all_4 <- rbind(zebrafinch_aln_ratio_df, anna_aln_ratio_df, platypus_aln_ratio_df, climbingperch_aln_ratio_df)
+all_4$species <- factor(all_4$species, level=species_order)
+
+head(all_4)
+tail(all_4)
 
 ###############################################################
 ####### [ 2. GC & missing ratio - 2. Drawing plots ] #########
 ###############################################################
+
+# All 4 in one plot
+# (1) gene body
+# (1-1) Exon
+aln_exon_df <-all_4 %>%
+    filter(position %in% exon_order)
+aln_exon_df$num_position <- as.numeric(factor(aln_exon_df$position, level=exon_order))
+# (1-2) Intron
+aln_intron_df <-all_4 %>%
+    filter(position %in% intron_order)
+aln_intron_df$num_position <- as.numeric(factor(aln_intron_df$position, level=intron_order))
+aln_intron_df$num_position <- ifelse(aln_intron_df$num_position == 1, 1.5, 
+                              ifelse(aln_intron_df$num_position == 2, 2.5,
+                              ifelse(aln_intron_df$num_position == 3, 3,
+                              ifelse(aln_intron_df$num_position == 4, 3.5,
+                              ifelse(aln_intron_df$num_position == 5, 4.5, 100)))))
+aln_intron_df$num_position <- as.numeric(aln_intron_df$num_position)
+aln_exon_df$num_position <- as.numeric(aln_exon_df$num_position)
+aln_exon_df$type <- "Exon"
+aln_intron_df$type <- "Intron"
+aln_genic_df<- rbind(aln_exon_df, aln_intron_df)
+aln_genic_df$type <- factor(aln_genic_df$type, level=c("Exon","Intron"))
+head(aln_genic_df)
+
+head(aln_exon_df)
+gene_body_plot <- ggplot(aln_genic_df, aes(x = num_position, y = GC_mean, color=species)) +
+    geom_vline(xintercept = 1.5, linetype="dashed", color = "grey", size=0.1) +
+    geom_vline(xintercept = 2.5, linetype="dashed", color = "grey", size=0.1) +
+    geom_vline(xintercept = 3.5, linetype="dashed", color = "grey", size=0.1) +
+    geom_vline(xintercept = 4.5, linetype="dashed", color = "grey", size=0.1) +
+    geom_vline(xintercept = 1,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 2,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 3,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 4,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_vline(xintercept = 5,   linetype="solid", color = "#5e5e5e", size=0.1) +
+    geom_line( data = aln_exon_df, mapping = aes(y = GC_mean), linetype = "solid", lwd=0.3) +
+    geom_point(data = aln_exon_df, mapping = aes(y = GC_mean), shape = 19, size=0.5) +
+    geom_line( data = aln_intron_df, mapping = aes(y = GC_mean), linetype = "dashed", lwd=0.3) +
+    geom_point(data = aln_intron_df, mapping = aes(y = GC_mean), shape = 19, size=0.5) +
+    geom_line( data = aln_exon_df, mapping = aes(y = Not_aln_mean), linetype = "solid", lwd=0.3) +
+    geom_point(data = aln_exon_df, mapping = aes(y = Not_aln_mean), shape = 1, size=0.5) +
+    geom_line( data = aln_intron_df, mapping = aes(y = Not_aln_mean), linetype = "dashed", lwd=0.3) +
+    geom_point(data = aln_intron_df, mapping = aes(y = Not_aln_mean), shape = 1, size=0.5) +
+    scale_x_continuous(name="Intron", breaks = c(1.5, 2.5, 3, 3.5, 4.5), labels=c("5'UTR", "First", " ", "Last", "3'UTR"),
+                       sec.axis=sec_axis(~. + 0, name="Exon", breaks = c(1,2,3,4,5), labels=c("5'UTR", "First", "Internal", "Last", "3'UTR  "))) + 
+    scale_y_continuous(breaks = c(0, 20, 40, 60)) +
+    # scale_shape_manual(values = c(19, 19), labels=c("Exon or Up/Downstream", "Intron")) +
+    scale_linetype(labels=c("Exon or Up/Downstream", "Intron"))+
+    scale_color_manual(values = my_col) +
+    coord_cartesian(ylim=c(0, 75), xlim=c(0.75,5.25), expand=FALSE)+
+    labs(color="Species", title = "Gene Body", linetype="Type", shape="Type") + 
+    theme_pubr() +
+    theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
+          strip.text = element_blank(),
+          strip.background = element_blank(),
+          axis.line = element_line(size=0.1),
+          legend.position = "bottom",
+          legend.key.size = unit(3, "mm"),
+          legend.text = element_text(size=6),
+          legend.title = element_text(size=6),
+          legend.margin=margin(c(0,0,0,0)),
+          axis.text.y = element_text(size=6),
+          axis.text.x =  element_text(size=6,hjust=0.5,vjust=0.4),
+          plot.margin = margin(t = 1, r = 1, b = 8, l = 1, unit = "pt"),
+          axis.ticks = element_line(size=0.1),
+          axis.title = element_text(size=6, face='bold')) +     
+    guides(linetype=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+           shape=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+           color = guide_legend(nrow = 2, keyheight = unit(3, "mm")))
+gene_body_plot
+
+# (2-2) Upstream 
+aln_up_2kb_df <- all_4 %>%
+    filter(position %in% up_2Kb_order_c)
+aln_up_2kb_df$num_position <- as.numeric(factor(aln_up_2kb_df$position, level=up_2Kb_order_c))
+up_2kb_labels <- c("-2","-1","-0")
+
+gc_mean <- cbind(aln_up_2kb_df[, -which(names(aln_up_2kb_df) %in% c("Not_aln_mean"))], "Found")
+colnames(gc_mean) <- c("position", "mean", "species", "num_position", "type")
+head(gc_mean)
+not_aln_mean <- cbind(aln_up_2kb_df[, -which(names(aln_up_2kb_df) %in% c("GC_mean"))], "Missing")
+colnames(not_aln_mean) <- c("position", "mean", "species", "num_position", "type")
+head(not_aln_mean)
+
+aln_up_2kb_df<- rbind(gc_mean, not_aln_mean)
+aln_up_2kb_df$type <- factor(aln_up_2kb_df$type, level=c("Found","Missing"))
+
+head(aln_up_2kb_df)
+tail(aln_up_2kb_df)
+
+up_plot <- ggplot(aln_up_2kb_df, aes(x = num_position, y = mean, color=species)) +
+    geom_line(aes(group=interaction(type,species)),  lwd=0.3, alpha=0.7) +
+    geom_point(aes(group=interaction(type,species), shape = type), size=0.5, alpha=0.7) +
+    scale_shape_manual(values=c(19,1), labels=c("Found", "Missing"), name = "Type")+
+    scale_x_continuous(breaks=c(1,10,20), labels=c("-2","-1","0"), name=" ", 
+                       sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
+    scale_y_continuous(breaks = c(0, 20,40,60)) +
+    coord_cartesian(ylim=c(0, 75), xlim=c(0.5, 20.5), expand=FALSE)+
+    labs(color="Species", title="Upstream") + 
+    scale_color_manual(values = my_col) +
+    theme_pubr()+
+    theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
+          strip.text = element_blank(),
+          strip.background = element_blank(),
+          axis.line = element_line(size=0.1),
+          legend.position = "bottom",
+          legend.key.width = unit(3,"mm"),
+          legend.text = element_text(size=6),
+          legend.title = element_text(size=6),
+          axis.text.y = element_text(size=6),
+          axis.text.x =  element_text(size=6,hjust=0.5),
+          plot.margin = margin(t = 1, r = 1, b = 8, l = 1, unit = "pt"),
+          axis.ticks = element_line(size=0.1),
+          axis.title = element_text(size=6, face='bold'),
+          axis.title.x = element_text(size=6, face='bold', hjust=1)) +
+    guides(color = guide_legend(nrow = 1))
+up_plot
+
+# (2-2) Downstream 
+aln_down_2kb_df <- all_4 %>%
+    filter(position %in% down_2kb_order_c)
+aln_down_2kb_df$num_position <- as.numeric(factor(aln_down_2kb_df$position, level=down_2kb_order_c))
+down_2kb_labels <- c("+0","+1","+2")
+
+head(aln_down_2kb_df)
+
+gc_mean <- cbind(aln_down_2kb_df[, -which(names(aln_down_2kb_df) %in% c("Not_aln_mean"))], "Found")
+colnames(gc_mean) <- c("position", "mean", "species", "num_position", "type")
+head(gc_mean)
+not_aln_mean <- cbind(aln_down_2kb_df[, -which(names(aln_down_2kb_df) %in% c("GC_mean"))], "Missing")
+colnames(not_aln_mean) <- c("position", "mean", "species", "num_position", "type")
+head(not_aln_mean)
+
+aln_down_2kb_df<- rbind(gc_mean, not_aln_mean)
+aln_down_2kb_df$type <- factor(aln_down_2kb_df$type, level=c("Found","Missing"))
+
+head(aln_down_2kb_df)
+tail(aln_down_2kb_df)
+
+down_plot <- ggplot(aln_down_2kb_df, aes(x = num_position, y = mean, color=species)) +
+    geom_line(aes(group=interaction(type,species)),  lwd=0.3, alpha=0.7) +
+    geom_point(aes(group=interaction(type,species), shape = type), size=0.4, alpha=0.7) +
+    scale_shape_manual(values=c(19,1), labels=c("Found", "Missing"), name = "")+
+    scale_x_continuous(breaks=c(1,10,20), labels=c("0","+1","+2"), name="(kbp)",
+                       sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
+    scale_y_continuous(breaks = c(0, 20, 40, 60)) +
+    coord_cartesian(ylim=c(0, 75), xlim=c(0.5, 20.5), expand=FALSE)+
+    labs(color="Species", title="Downstream") + 
+    scale_color_manual(values = my_col) +
+    theme_pubr()+
+    theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
+          strip.text = element_blank(),
+          strip.background = element_blank(),
+          axis.line = element_line(size=0.1),
+          legend.position = "bottom",
+          legend.key.width = unit(3,"mm"),
+          legend.text = element_text(size=6),
+          legend.title = element_text(size=6),
+          legend.margin=margin(c(0,0,0,0)),
+          axis.text.y = element_text(size=6),
+          axis.text.x =  element_text(size=6,hjust=0.5),
+          plot.margin = margin(t = 1, r = 1, b = 8, l = 1, unit = "pt"),
+          axis.ticks = element_line(size=0.1),
+          axis.title = element_text(size=6, face='bold'),
+          axis.title.x = element_text(size=6, face='bold', hjust=1)) +
+    guides(linetype=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+                shape=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+                color = guide_legend(nrow = 2, keyheight = unit(3, "mm")))
+down_plot
+
+#species_title = textGrob(species_s, vjust = 0.5, gp = gpar(fontface = "bold", cex = 0.6))
+legend = gtable_filter(ggplotGrob(down_plot), "guide-box")
+gc_n_missing_plot <- arrangeGrob(up_plot + theme(legend.position="none", axis.title.y = element_blank()),
+                                 gene_body_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()),
+                                 down_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()),
+                                 ncol = 3,
+                                 left = textGrob("GC Contents (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")),
+                                 bottom = legend)
+ggsave("output/Fig6_missing_all.gc.png", gc_n_missing_plot, width=6, height=2.5,units = "in")
+
+#   Main Figures END
+#######################################################################################################################################
+
 
 # version 1. original layout: 
 #    [Title] Species name
@@ -266,16 +462,16 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
         filter(position %in% intron_order)
     aln_intron_df$num_position <- as.numeric(factor(aln_intron_df$position, level=intron_order))
     aln_intron_df$num_position <- ifelse(aln_intron_df$num_position == 1, 1.5, 
-                                         ifelse(aln_intron_df$num_position == 2, 2.5,
-                                                ifelse(aln_intron_df$num_position == 3, 3,
-                                                       ifelse(aln_intron_df$num_position == 4, 3.5,
-                                                              ifelse(aln_intron_df$num_position == 5,4.5, 100)))))
+                                  ifelse(aln_intron_df$num_position == 2, 2.5,
+                                  ifelse(aln_intron_df$num_position == 3, 3,
+                                  ifelse(aln_intron_df$num_position == 4, 3.5,
+                                  ifelse(aln_intron_df$num_position == 5, 4.5, 100)))))
     aln_intron_df$num_position <- as.numeric(aln_intron_df$num_position)
     aln_exon_df$num_position <- as.numeric(aln_exon_df$num_position)
-    aln_exon_df$type <- "exon"
-    aln_intron_df$type <- "intron"
+    aln_exon_df$type <- "Exon"
+    aln_intron_df$type <- "Intron"
     aln_genic_df<- rbind(aln_exon_df, aln_intron_df)
-    aln_genic_df$type <- factor(aln_genic_df$type, level=c("exon","intron"))
+    aln_genic_df$type <- factor(aln_genic_df$type, level=c("Exon","Intron"))
     
     # (2-1) Upstream 
     aln_up_2kb_df <- species_df %>%
@@ -299,7 +495,7 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
     down_2kb_melt_df<- melt(aln_down_2kb_df,id.vars=c("position","num_position"),
                             measure.vars=c("GC content","Ratio of\nmissing sequences"))
     
-    aln_gene_body_plot <- ggplot(exon_and_intron_melt_df, aes(x =num_position, y = value, color=variable)) +
+    aln_gene_body_plot <- ggplot(exon_and_intron_melt_df, aes(x = num_position, y = value, color=species)) +
         geom_line(aes(linetype = type), lwd=0.1) +
         geom_point(aes(shape = type), size=0.01) +
         geom_vline(xintercept = 1.5, linetype="dashed", color = "grey", size=0.05) +
@@ -311,43 +507,43 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
         geom_vline(xintercept = 3, linetype="solid", color = "#5e5e5e", size=0.05) +
         geom_vline(xintercept = 4, linetype="solid", color = "#5e5e5e", size=0.05) +
         geom_vline(xintercept = 5, linetype="solid", color = "#5e5e5e", size=0.05) +
-        scale_x_continuous(name="Intron", breaks = c(1.5, 2.5, 3, 3.5, 4.5), labels=c("5'", "F", "I", "L", "3'"),
-                           sec.axis=sec_axis(~. + 0, name="Exon", breaks = c(1,2,3,4,5), labels=c("5'", "F", "I", "L", "3'"))) + 
+        scale_x_continuous(name="Intron", breaks = c(1.5, 2.5, 3, 3.5, 4.5), labels=c("5'UTR", "First", " ", "Last", "3'UTR"),
+                           sec.axis=sec_axis(~. + 0, name="Exon", breaks = c(1,2,3,4,5), labels=c("5'UTR", "First", "Internal", "Last", "3'UTR"))) + 
         scale_y_continuous(breaks = c(20,40,60))+
-        scale_shape_manual(values=c(19,1), labels=c("Exon or upstream/downstream sequence", "Intron"))+
+        scale_shape_manual(values=c(19,1), labels=c("Exon or Up/Downstream", "Intron"))+
         scale_color_manual(values=c("red","black"),labels=c("GC content", "Ratio of missing sequences"))+
-        scale_linetype_manual(values=c("solid","dotted"), labels=c("Exon or upstream/downstream sequence", "Intron"))+
+        scale_linetype_manual(values=c("solid","dotted"), labels=c("Exon or Up/Downstream", "Intron"))+
         coord_cartesian(ylim=c(0,75), xlim=c(0.75,5.25), expand=FALSE)+#, expand=FALSE)+#coord_cartesian(ylim=c(30,75), expand=FALSE)+
-        labs(color="Color", title = "Gene body", linetype="Type", shape="Type") + 
+        labs(color="Color", title = "Gene Body", linetype="Type", shape="Type") + 
         theme_pubr() +
-        theme(plot.title = element_text(size=6,face='bold'),
-              legend.direction = "horizontal",
+        theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
               legend.position = "bottom",
               legend.background = element_blank(),
               legend.text = element_text(size=6),
               legend.title = element_text(size=6),
+              legend.key.width = unit(3,"mm"),
               axis.text.y = element_text(size=6),
               axis.text.x =  element_text(size=6,hjust=0.5,vjust=0.4),
-              plot.margin = margin(t = 0, r = 0.5, b = 2, l = 0, unit = "pt"),
+              plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "pt"),
               axis.line = element_line(size=0.1),
               axis.ticks = element_line(size=0.1),
               axis.title = element_text(size=6, face='bold')) +
-        guides(linetype=guide_legend(nrow = 2),
-               shape=guide_legend(nrow = 2),
-               color = guide_legend(nrow = 2))
+        guides(linetype=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+               shape=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
+               color = guide_legend(nrow = 2, keyheight = unit(3, "mm")))
     
     aln_up2kb_plot <- ggplot(up_2kb_melt_df, aes(x =num_position, y = value, color=variable)) +
         geom_line(lwd=0.1) +
         #geom_dl(aes(label=paste0(variable,"\n"), color=variable), method = list("first.points",cex = 0.45, hjust=0 , vjust=0))+
         geom_point(size=0.01) +
-        scale_x_continuous(breaks=c(1,10,20), labels=c("-2","-1","0"), name="(Kbp)", 
+        scale_x_continuous(breaks=c(1,10,20), labels=c("-2","-1","0"), name=" ", 
                            sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
         scale_y_continuous(breaks = c(20,40,60))+
         scale_color_manual(values=c("red","black"),labels=c("GC content","Ratio of missing sequences"))+
         coord_cartesian(ylim=c(0,75),expand=TRUE)+
-        labs(color="Color", title = "Upstream", x="(Kbp)") + 
+        labs(color="Color", title = "Upstream", x="(kbp)") + 
         theme_pubr() +
-        theme(plot.title = element_text(size=6,face='bold'),
+        theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
               strip.text = element_blank(),
               strip.background = element_blank(),
               legend.direction = "horizontal",
@@ -358,7 +554,7 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
               axis.ticks = element_line(size=0.1),
               axis.text.y = element_text(size=6),
               axis.text.x =  element_text(size=6),
-              plot.margin = margin(t = 0, r = 0.5, b = 2, l = 0, unit = "pt"),
+              plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "pt"),
               axis.title = element_text(size=6, hjust=1,face='bold'))+
         guides(color = guide_legend(nrow = 1))
     
@@ -366,14 +562,14 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
     aln_down2kb_plot <- ggplot(down_2kb_melt_df, aes(x =num_position, y = value, color=variable)) +
         geom_line(lwd=0.1) +
         geom_point(size=0.01) +
-        scale_x_continuous(breaks=c(1,10,20), labels=c("0","+1","+2"), name="(Kbp)",
+        scale_x_continuous(breaks=c(1,10,20), labels=c("0","+1","+2"), name="(kbp)",
                            sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
         scale_y_continuous(breaks = c(20,40,60))+
         scale_color_manual(values=c("red","black"),labels=c("GC content", "Ratio of missing sequences"))+
         coord_cartesian(ylim=c(0,75),expand=TRUE)+
         labs(color="Color", title = "Downstream", x="(Kbp)") + 
         theme_pubr() +
-        theme(plot.title = element_text(size=6,face='bold'),
+        theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
               strip.text = element_blank(),
               strip.background = element_blank(),
               legend.direction = "horizontal",
@@ -384,7 +580,7 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
               axis.text.x = element_text(size=6),
               axis.line = element_line(size=0.1),
               axis.ticks = element_line(size=0.1),
-              plot.margin = margin(t = 0, r = 4, b = 2, l = 0, unit = "pt"),
+              plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "pt"),
               axis.title = element_text(size=6, hjust=1,face='bold'))+
         guides(color = guide_legend(nrow = 1))
     
@@ -394,14 +590,14 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
                                      aln_gene_body_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()),#, axis.ticks.y = element_blank(), axis.line.y.left = element_blank()), 
                                      aln_down2kb_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()),#, axis.ticks.y = element_blank(), axis.line.y.left = element_blank()),
                                      ncol = 3,
-                                     left = textGrob("Percentage (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")),
+                                     left = textGrob("GC Contents (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")),
                                      top = species_title)
     #))
     #legend, 
     #nrow=2,heights=c(10, 1))
-    out_png_file <- paste0("./output/", species_s, ".gc_n_missing.png")
+    out_png_file <- paste0("output/Fig6_missing_", species_s, ".gc.png")
     print(out_png_file)
-    ggsave(out_png_file, gc_n_missing_plot, width=3, height=1.8,units = "in")
+    ggsave(out_png_file, gc_n_missing_plot, width=6, height=2.5,units = "in")
     if (species_s == "Climbing perch") {
         plot_list <- list(species_title,
                           aln_up2kb_plot + theme(legend.position="none", axis.title.y = element_blank()),
@@ -414,6 +610,8 @@ missing_plot_maker_original_layout <- function(species_df, species_s) {
                               aln_down2kb_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()))}
     return(plot_list)
 }
+
+all_plot <- missing_plot_maker_original_layout(species_df = all_4, species_s="All")
 
 finch_plot_list <- missing_plot_maker_original_layout(species_df=zebrafinch_aln_ratio_df, species_s="Zebra finch")
 anna_plot_list <- missing_plot_maker_original_layout(species_df=anna_aln_ratio_df, species_s="Anna's hummingbird")
@@ -584,7 +782,7 @@ missing_plot_maker_modified_layout <- function(species_df, species_s) {
                                      ncol = 3,
                                      left = textGrob("Percentage (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
     
-    out_png_file <- paste0("./output/", species_s, ".modified.gc_n_missing.png")
+    out_png_file <- paste0("output/Fig6_missing_", species_s, ".gc.modified.png")
     print(out_png_file)
     ggsave(out_png_file, gc_n_missing_plot, width=3, height=1.8,units = "in")
     if (species_s == "Climbing perch") {
