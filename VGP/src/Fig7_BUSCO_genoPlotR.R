@@ -128,10 +128,12 @@ make_comp_eachID("15"),
 make_comp_eachID("16")
 )
 
+left_offset = rep(c(0), times = length(dna_segs))
+
 # draw figure
 # without chromosome names - Fig7a
 pdf(oNAME,figure_w,figure_h)
-plot_gene_map(dna_segs=dna_segs, comparisons=comparisons, minimum_gap_size = 0.02)
+plot_gene_map(dna_segs=dna_segs, comparisons=comparisons, minimum_gap_size = 0.04, offsets =  left_offset)
 dev.off()
 
 # with chromosome names
