@@ -8,7 +8,7 @@ alpha_link = 0.1 # Transparency of BUSCO links
 figure_w = 5.4
 figure_h = 5.4
 wPATH = "VGP" #working directory
-oNAME = "output/Fig7a_BUSCOlinks_hg38_chr6.pdf" # output name (.pdf)
+oNAME = "output/Fig7a_BUSCOlinks_hg38_chr6" # output name (.pdf)
 oNAME_chrname = "output/Fig7a_BUSCOlinks_hg38_chr6_with_ann.pdf" # output name (.pdf)
 
 # setting working directory
@@ -77,16 +77,16 @@ make_dnaseg_eachID("mPhyDis1"),
 make_dnaseg_eachID("mOrnAna1"),
 make_dnaseg_eachID("rGopEvg1"),
 make_dnaseg_eachID("bCalAnn1"),
-make_dnaseg_eachID("bStrHab1"),
 make_dnaseg_eachID("bTaeGut1"),
+make_dnaseg_eachID("bStrHab1"),
 make_dnaseg_eachID("aRhiBiv1"),
-make_dnaseg_eachID("sAmbRad1"),
 make_dnaseg_eachID("fGouWil2"),
 make_dnaseg_eachID("fAstCal1"),
 make_dnaseg_eachID("fArcCen1"),
 make_dnaseg_eachID("fCotGob3"),
 make_dnaseg_eachID("fMasArm1"),
-make_dnaseg_eachID("fAnaTes1")
+make_dnaseg_eachID("fAnaTes1"),
+make_dnaseg_eachID("sAmbRad1")
 )
 names(dna_segs)=sID_list
 
@@ -98,16 +98,16 @@ make_annotation_eachID("mPhyDis1"),
 make_annotation_eachID("mOrnAna1"),
 make_annotation_eachID("rGopEvg1"),
 make_annotation_eachID("bCalAnn1"),
-make_annotation_eachID("bStrHab1"),
 make_annotation_eachID("bTaeGut1"),
+make_annotation_eachID("bStrHab1"),
 make_annotation_eachID("aRhiBiv1"),
-make_annotation_eachID("sAmbRad1"),
 make_annotation_eachID("fGouWil2"),
 make_annotation_eachID("fAstCal1"),
 make_annotation_eachID("fArcCen1"),
 make_annotation_eachID("fCotGob3"),
 make_annotation_eachID("fMasArm1"),
-make_annotation_eachID("fAnaTes1")
+make_annotation_eachID("fAnaTes1"),
+make_annotation_eachID("sAmbRad1")
 )
 comparisons = list(
 make_comp_eachID("01"),
@@ -132,7 +132,8 @@ left_offset = rep(c(0), times = length(dna_segs))
 
 # draw figure
 # without chromosome names - Fig7a
-pdf(oNAME,figure_w,figure_h)
+
+pdf(paste(oNAME, "pdf", sep = "."),figure_w,figure_h)
 plot_gene_map(dna_segs=dna_segs, comparisons=comparisons, minimum_gap_size = 0.04, offsets =  left_offset)
 dev.off()
 
