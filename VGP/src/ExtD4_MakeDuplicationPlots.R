@@ -37,6 +37,7 @@ shared_theme2 <- function() {
 }
 
 setwd("VGP")
+getwd()
 
 #
 # Test data that is ignored on the command line
@@ -98,6 +99,18 @@ for(i in seq(1,length(idx))) {
   allRepeats$cumulativeLength[idx[[i]]] <- cumsum(allRepeats$orderedLength[idx[[i]]])
   allRepeats$cumulativeLengthNorm[idx[[i]]] <- cumsum(allRepeats$orderedLength[idx[[i]]])/asmtab$normLength[which(asmtab$V1 == allRepeats$V1[idx[[i]][1]])[1]]
 }
+
+segdups <- data.frame()
+for (g in unique(allRepeats$V1) ) {
+  gDat <- allRepeats[allRepeats$V1 == g,]
+  cumSegDup <- tail(gDat[gDat$orderedIdentity < 0.9,]$cumulativeLengthNorm, n = 1)
+  allCollapses <- tail(gDat$cumulativeLengthNorm, n = 1)
+  gDatNew <- data.frame("Genome" = g, "SegDup" = cumSegDup, "All" = allCollapses, "PercentSegDup" = cumSegDup/allCollapses)
+  segdups <- rbind(segdups, gDatNew)
+}
+
+summary(segdups)
+
 
 pdf(allSpeciesPlot, width = 3.3, height = 2.9)
 plt <- ggplot(allRepeats,aes(x=cumulativeLengthNorm, y=orderedIdentity, group=V1, colour=V1, size=orderedLength)) +
