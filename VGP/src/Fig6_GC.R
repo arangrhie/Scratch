@@ -197,7 +197,7 @@ gc_missing_plot <- arrangeGrob(up_plot + theme(legend.position="none", axis.titl
                                  gene_body_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()),
                                  down_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()),
                                  ncol = 3,
-                                 left = textGrob("GC Contents (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
+                                 left = textGrob("GC Content (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
 ggsave("output/Fig6_gc_missing.png", gc_missing_plot, width=6, height=2.1,units = "in")
 legend1 = gtable_filter(ggplotGrob(down_plot), "guide-box")
 
@@ -312,7 +312,7 @@ clade_gc_plot <- arrangeGrob(up_plot + theme(legend.position="none", axis.title.
                              gene_body_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank(), plot.title = element_blank()),
                              down_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank(), plot.title = element_blank()),
                              ncol = 3,
-                             left = textGrob("GC Contents (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
+                             left = textGrob("GC Content (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
 ggsave("output/Fig6_gc_content_by_clades.png", clade_gc_plot, width=6, height=2,units = "in")
 legend2 = gtable_filter(ggplotGrob(down_plot), "guide-box")
 legend3 = gtable_filter(ggplotGrob(gene_body_plot), "guide-box")
