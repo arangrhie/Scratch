@@ -1,18 +1,82 @@
 library(ggplot2)
 library(scales)
 library(cowplot)
+library(gridExtra)
 
 getwd()
 setwd("../VGP")
 
 gray = "#EEEEEE"
 black = "#808080"
+gray_light = "#ffffff"
+black_light = "#a6a6a6"
 my_col = c(gray, black)
+my_col_3 = c(gray, black, black)
+my_col_4 = c(gray_light, black_light, black_light, gray, black, black)
+
+plot_mappability <- function(dat, label) {
+  ggplot(dat, aes(x=Stat, y=Percent, fill=Assembly)) + 
+    geom_bar(stat="identity", color="black", 
+             position=position_dodge()) +
+    geom_errorbar(aes(ymin=Percent-sem, ymax=Percent+sem), width=.2,
+                  position=position_dodge(.9)) +
+    ylab("Avg. Reads Mapped (%)") +
+    #xlab(label) +
+    theme_classic() +
+    theme(
+      axis.title = element_text(face="bold", family = "Arial", size=6),
+      axis.text = element_text(face="bold", family = "Arial", size=5),
+      legend.position = "none",
+      legend.title = element_blank(),
+      legend.key = element_blank()) +
+    scale_color_manual(values = my_col) +
+    scale_fill_manual(values = my_col) +
+    scale_x_discrete(name=label,
+                     labels=c("Total\n", "Unique\n")) +
+    scale_y_continuous(expand = c(0, 0), limits=c(50, 100), oob = rescale_none)
+}
+
+plot_annotation_2 <- function(dat, label, y_limit) {
+  ggplot(dat, aes(x=Order, y=Count, fill=Label)) + 
+    geom_bar(position=position_stack(), stat="identity", color="black") +
+    theme_classic() +
+    theme(
+      axis.title = element_text(face="bold", family = "Arial", size=6),
+      axis.text = element_text(face="bold", family = "Arial", size=5),
+      legend.position = "none",
+      legend.title = element_blank(),
+      legend.key = element_blank()) +
+    scale_fill_manual(values = my_col_4) +
+    scale_x_continuous(name=label,
+                       breaks=c(1.5, 5, 8.5),
+                       labels=c("Anna's\nHummingbird", "Zebra\nfinch", "Platypus")) +
+    scale_y_continuous(expand = c(0, 0), labels = comma, limits=c(0, y_limit))
+}
+
+plot_annotation <- function(dat, label, y_limit) {
+  ggplot(dat, aes(x=Order, y=Count, fill=Label)) + 
+    geom_bar(position="dodge", stat="identity", color="black") +
+    #xlab(label) +
+    theme_classic() +
+    theme(
+      axis.title = element_text(face="bold", family = "Arial", size=6),
+      axis.text = element_text(face="bold", family = "Arial", size=5),
+      legend.position = "none",
+      legend.title = element_blank(),
+      legend.key = element_blank()) +
+    scale_fill_manual(values = my_col_3) +
+    scale_x_continuous(name=label,
+                       breaks=c(1.5, 5, 8.5),
+                       labels=c("Anna's\nHummingbird", "Zebra\nfinch", "Platypus")) +
+    scale_y_continuous(expand = c(0, 0), labels = comma, limits=c(0, y_limit))
+}
 
 dat = read.table("input/Fig5_mappability.tab", header=T)
 head(dat)
 
-dat$Assembly = factor(dat$Assembly, levels = unique(dat$Assembly), labels = c("Taeniopygia_guttata-3.2.4", "bTaeGut1_v1.p"))
+# Labels
+# dat$Assembly = factor(dat$Assembly, levels = unique(dat$Assembly), labels = c("Taeniopygia_guttata-3.2.4", "bTaeGut1_v1.p"))
+dat$Assembly = factor(dat$Assembly, levels = unique(dat$Assembly), labels = c("Previous", "VGP"))
 
 rna_dat = dat[dat$Type == "RNA" & (dat$Stat == "Total" | dat$Stat == "Unique"),]
 atac_dat = dat[dat$Type == "ATAC" & (dat$Stat == "Total" | dat$Stat == "Unique"),]
@@ -26,36 +90,40 @@ p <- ggplot(data=rna_dat, aes(x=Stat, y=Percent, fill=Assembly)) +
   scale_color_manual(values = my_col) +
   scale_fill_manual(values = my_col) +
   scale_y_continuous(expand = c(0, 0), limits=c(0, 100)) +
-  theme(axis.text.y=element_text(face="bold", family = "Arial"),
-        axis.line.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        axis.title.x=element_blank(),
-        panel.grid.minor.x=element_blank(),
-        panel.grid.major.x=element_blank(),
-        legend.position = "left")
+  theme(
+    axis.title = element_text(face="bold", family = "Arial", size=6),
+    axis.text = element_text(face="bold", family = "Arial", size=5),
+    axis.line.x=element_blank(),
+    axis.ticks.x=element_blank(),
+    panel.grid.minor.x=element_blank(),
+    panel.grid.major.x=element_blank(),
+    legend.position = "left",
+    legend.text = element_text(family = "Arial", size = 6),
+    legend.title = element_text(face="bold", family = "Arial", size = 7))
 p
 legend <- get_legend(p)
 
-plot_mappability <- function(dat, x_label) {
-  ggplot(dat, aes(x=Stat, y=Percent, fill=Assembly)) + 
-    geom_bar(stat="identity", color="black", 
-             position=position_dodge()) +
-    geom_errorbar(aes(ymin=Percent-sem, ymax=Percent+sem), width=.2,
-                  position=position_dodge(.9)) +
-    ylab("Avg. Reads Mapped (%)") +
-    xlab(x_label) +
-    theme_classic() +
-    theme(#axis.title.x = element_blank(),
-          axis.text = element_text(face="bold", family = "Arial"),
-          legend.position = "none",
-          legend.title = element_blank(),
-          legend.key = element_blank()) +
-    scale_color_manual(values = my_col) +
-    scale_fill_manual(values = my_col) +
-    scale_y_continuous(expand = c(0, 0), limits=c(0, 100))
-} 
 a <- plot_mappability(rna_dat, "RNA-Seq")
 b <- plot_mappability(atac_dat, "ATAC-Seq")
-g <- arrangeGrob(legend, a, b, nrow = 1)
-ggsave(file = "output/Fig5_mappability.png", width = 8, height = 2.5, g)
+a
+b
+
+## Annotation results ##
+dat = read.table("input/Fig5_annotation.tab", header=T)
+CDS_dat=dat[dat$Category !="PartialCodingGenes",]
+CDS_dat$Label = factor(CDS_dat$Label,
+                       levels = c("Previous_Total", "VGP_Total", "VGPTrio_Total", "Previous_Fully", "VGP_Fully", "VGPTrio_Fully"))
+
+partial_dat=dat[dat$Category=="PartialCodingGenes",]
+
+head(CDS_dat)
+tail(CDS_dat)
+
+c <- plot_annotation_2(dat = CDS_dat, label = "Total vs. Fully supp. CDS", y_limit = 50000)
+d <- plot_annotation(partial_dat, "Partial Coding Genes", 6000)
+c
+d
+# g <- arrangeGrob(legend, a, b, c, d, nrow = 1)
+plot_grid(legend, a, b, c, d, nrow = 1, rel_widths = c(0.1, 0.2, 0.2, 0.25, 0.25))
+ggsave(file = "output/Fig5ad.png", width = 6.5, height = 1.5)
+
