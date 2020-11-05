@@ -93,7 +93,7 @@ ggplot(dat, aes(x = GenomeSize, y = ScaffoldNG50)) +
 ggsave("output/Fig3c_genomesize_scaffNG50.png", width = 1.5, height = 1.5)
 fit=lm(ScaffoldNG50 ~ GenomeSize, data = dat)
 summary(fit)
-
+# Take adjusted R-square and p-value from F-statistic
 
 dat=read.table("input/initial_submit/Fig3_purging.tab", header=T)
 dat=read.table("input/Fig3_purging.tab", header=T)
