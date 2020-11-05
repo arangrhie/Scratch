@@ -6,7 +6,7 @@ library(genoPlotR)
 RefID = "hg38"
 alpha_link = 0.1 # Transparency of BUSCO links
 figure_w = 5.4
-figure_h = 5.4
+figure_h = 6
 wPATH = "VGP" #working directory
 oNAME = "output/Fig7a_BUSCOlinks_hg38_chr6" # output name (.pdf)
 oNAME_chrname = "output/Fig7a_BUSCOlinks_hg38_chr6_with_ann.pdf" # output name (.pdf)
@@ -134,11 +134,11 @@ left_offset = rep(c(0), times = length(dna_segs))
 # without chromosome names - Fig7a
 
 pdf(paste(oNAME, "pdf", sep = "."),figure_w,figure_h)
-plot_gene_map(dna_segs=dna_segs, comparisons=comparisons, minimum_gap_size = 0.04, offsets =  left_offset)
+plot_gene_map(dna_segs=dna_segs, comparisons=comparisons, minimum_gap_size = 0.5, offsets = left_offset, scale_cex = 0, scale = FALSE)
 dev.off()
 
 # with chromosome names
-pdf(oNAME_chrname,figure_w,figure_h)
-plot_gene_map(dna_segs=dna_segs, annotations = annotations, comparisons=comparisons, main=paste0("BUSCO links of ",RefID))
-dev.off()
+# pdf(oNAME_chrname,figure_w,figure_h)
+# plot_gene_map(dna_segs=dna_segs, annotations = annotations, comparisons=comparisons, main=paste0("BUSCO links of ",RefID))
+# dev.off()
 
