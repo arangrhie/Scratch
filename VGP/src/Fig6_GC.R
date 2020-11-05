@@ -40,7 +40,7 @@ shared_theme <- function(my_col, y_breaks) {
     theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
           strip.text = element_blank(),
           strip.background = element_blank(),
-          axis.line = element_line(size=0.1),
+          axis.line = element_line(size=0.2),
           legend.position = "bottom",
           legend.key.size = unit(3, "mm"),
           legend.text = element_text(size=6),
@@ -67,6 +67,7 @@ transform_intron_position <- function(column) {
 }
 
 setwd("VGP")
+getwd()
 
 ############################################
 ########### [ Shared Variables ] ###########
@@ -177,7 +178,6 @@ up_plot <- ggplot(aln_up_2kb_df, aes(x = num_position, y = mean, color=sequence)
                        sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
     coord_cartesian(ylim=c(0, 75), xlim=c(0.5, 20.5), expand=FALSE)+
     labs(color="Sequence", title="Upstream") + 
-    scale_color_manual(values = my_col2) +
     shared_theme(my_col2, y_breaks)
 up_plot
 
@@ -204,9 +204,10 @@ legend1 = gtable_filter(ggplotGrob(down_plot), "guide-box")
 #####################################################################
 ########### [Fig. 6b GC content of all VGP species ] ################
 #####################################################################
-summary_df <- read.csv("./input/Fig6/clade_GC_content/forR.gc.clade.tsv", sep="\t")
+summary_df <- read.csv("./input/Fig6/clade_GC_content/gc.clade.tsv", sep="\t")
+head(summary_df)
 summary_df$GC_mean  = summary_df$GC_mean*100
-summary_df$GC_se    = summary_df$GC_se * 100
+summary_df$GC_sd    = summary_df$GC_sd * 100
 
 vertebrate_clade <- c("Bird", "Mammal", "Reptile", "Skate", "Amphibian", "Fish")
 
@@ -260,35 +261,38 @@ down_30kb_df <- summary_df %>%
 down_30kb_df$numeric_position <- as.numeric(factor(down_30kb_df$position, level=down_30kb_order))
 down_30kb_df$clade <- factor(down_30kb_df$clade, level=vertebrate_clade)
 down_30kb_labels <- c("+0","+10","+20  ", " +30")
+
 head(genic_df)
+head(up_30kb_df)
+head(down_30kb_df)
 
 ######################################
 #### [ Fig. 6b 3. Drawing plots ] ####
 ######################################
 my_col=c("#d73027", "#fc8d59", "#fee090", "#762a83", "#1b7837", "#4575b4")
-y_breaks = c(40, 50, 60, 70)
+y_breaks = c(30, 40, 50, 60, 70)
 
 # (3-1) gene body plot
 gene_body_plot <- ggplot(genic_df, aes(x =numeric_position, y = GC_mean, color=clade)) +
     draw_gene_body_lines +
     geom_line(aes(group=interaction(type,clade), linetype = type), lwd=0.3) +
     geom_point(aes(group=interaction(type,clade), shape = type), size=0.4) +
-    geom_errorbar(aes(ymin = GC_mean - GC_se, ymax = GC_mean + GC_se, color = clade, group = interaction(type,clade), linetype = type), width=0.1, alpha=0.7) +
+    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade, group = interaction(type,clade), linetype = type), width=0.1, alpha=0.5, size = 0.3) +
     scale_shape_manual(values=c(19,1), labels=c("Exon or Up/Downstream", "Intron"))+
     scale_linetype(labels=c("Exon or Up/Downstream", "Intron")) +
-    coord_cartesian(ylim=c(35,75), xlim=c(0.75,5.25), expand=FALSE)+
+    coord_cartesian(ylim=c(25,75), xlim=c(0.75,5.25), expand=FALSE)+
     labs(color="Clade", title = "Gene Body", linetype="Type", shape="Type") + 
     shared_theme(my_col, y_breaks)
 gene_body_plot
 
 # (3-2) upstream 30Kbp plot
 up_plot <- ggplot(up_30kb_df, aes(x = numeric_position, y = GC_mean, color=clade)) +
-    geom_line(aes(group=clade), lwd=0.3, alpha=0.7) +
+    geom_line(aes(group=clade), lwd=0.3) +
     geom_point(aes(group=clade), size=0.4) +
-    geom_errorbar(aes(ymin = GC_mean - GC_se, ymax = GC_mean + GC_se, color = clade), width = 0.06, alpha = 0.3, size = 0.5) +
+    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade), width = 0.05, alpha = 0.5, size = 0.3) +
     scale_x_continuous(breaks = c(1,100,200,300), labels = up_30kb_labels, trans = reverselog_trans(10), name="",
                        sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
-    coord_cartesian(ylim=c(35,75), xlim = c(350, 0.8), expand=FALSE) +
+    coord_cartesian(ylim=c(25,75), xlim = c(350, 0.8), expand=FALSE) +
     labs(color="Clade", title="Upstream") + 
     shared_theme(my_col, y_breaks)
 up_plot
@@ -297,10 +301,10 @@ up_plot
 down_plot <- ggplot(down_30kb_df, aes(x = numeric_position, y = GC_mean, color=clade)) +
     geom_line(aes(group=clade), lwd=0.3) +
     geom_point(aes(group=clade), size=0.4) +
-    geom_errorbar(aes(ymin = GC_mean - GC_se, ymax = GC_mean + GC_se, color = clade), width = 0.06, alpha = 0.3, size = 0.5) +
+    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade), width = 0.05, alpha = 0.5, size = 0.3) +
     scale_x_log10(breaks=c(1,100,200,300), labels = down_30kb_labels, name="(kbp)",
                   sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
-    coord_cartesian(ylim=c(35,75), xlim = c(0.8, 350), expand=FALSE) +
+    coord_cartesian(ylim=c(25,75), xlim = c(0.8, 350), expand=FALSE) +
     labs(color="Clade", title="Downstream", x="(kbp)") + 
     shared_theme(my_col, y_breaks) +
     theme(axis.title.x = element_text(size=6, face='bold', hjust=1))
@@ -313,7 +317,7 @@ clade_gc_plot <- arrangeGrob(up_plot + theme(legend.position="none", axis.title.
                              down_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank(), plot.title = element_blank()),
                              ncol = 3,
                              left = textGrob("GC Content (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
-ggsave("output/Fig6_gc_content_by_clades.png", clade_gc_plot, width=6, height=2,units = "in")
+ggsave("output/Fig6_gc_content_by_clades_sd.png", clade_gc_plot, width=6, height=2,units = "in")
 legend2 = gtable_filter(ggplotGrob(down_plot), "guide-box")
 legend3 = gtable_filter(ggplotGrob(gene_body_plot), "guide-box")
 
