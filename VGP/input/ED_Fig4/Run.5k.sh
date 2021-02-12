@@ -1,0 +1,1 @@
+Rscript /home/cmb-16/mjc/mchaisso/projects/VGP/CovAnalysis/MakeDuplicationPlots.R all_repeat_summary.5k.tsv assembly_size.txt collapsed.dist.5k.hc.pdf collapsed.dist.5k.lc.pdf all_species.5k.tab all_dups.5k.pdf 5k
