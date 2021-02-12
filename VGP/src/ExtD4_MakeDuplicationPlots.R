@@ -1,6 +1,8 @@
 library(ggplot2)
 library(RColorBrewer)
 library(stringr)
+library(grid)
+library(gridExtra)
 
 fancy_scientific <- function(d) {
   # turn in to character string in scientific notation
@@ -39,13 +41,13 @@ shared_theme2 <- function() {
 plot_dot <- function (dat, x, y, xlabel, ylabel, xmin, xmax, ymin, ymax) {
   p <-  ggplot(dat, aes(x = x, y = y)) +
     theme_classic() +
-    geom_smooth(method='lm', se=F, color = "black", size = 0.5) +
+    geom_smooth(method='lm', se=F, color = "black", size = 0.3) +
     geom_point(colour = black, size = 0.5) +
     theme(legend.position = "none",
           legend.title = element_blank(),
           legend.key = element_blank(),
-          axis.title = element_text(size=7, family = "Arial", face = "bold"),
-          axis.text  = element_text(size=6, family = "Arial")) +
+          axis.title = element_text(size=7, face = "bold"),
+          axis.text  = element_text(size=6)) +
     scale_x_continuous(expand = c(0, 0), limits=c(xmin, xmax)) +  # for both axes to remove unneeded paddings
     scale_y_continuous(expand = c(0, 0), limits=c(ymin, ymax)) +
     xlab(xlabel) + ylab(ylabel)
@@ -60,23 +62,27 @@ getwd()
 # Ext. Data Fig. 4a-g
 #
 dat = read.table("input/ExtD4/summary_collapses.tab", header = T)
-dat
 head(dat)
 
 a = plot_dot(dat, x = dat$Repeat, y = dat$NumCollapses, xlabel = "Repeat (%)", ylabel = "Num. Collapses", xmin = 0, xmax = 65, ymin = 0, ymax = 2500)
-b = plot_dot(dat, x = dat$Repeat, y = dat$TotalBasesCollapseNorm, xlabel = "Repeat (%)", ylabel = "Collapsed Bases / Gb (Mb)", xmin = 0, xmax = 65, ymin = 0, ymax = 35)
-c = plot_dot(dat, x = dat$Repeat, y = dat$TotalExpandedNorm, xlabel = "Repeat (%)", ylabel = "Total Missing / Gb (Mb)", xmin = 0, xmax = 65, ymin = 0, ymax = 150)
+b = plot_dot(dat, x = dat$Repeat, y = dat$TotalBasesCollapseNorm, xlabel = "Repeat (%)", ylabel = "Collapsed Bases / Gb (Mbp)", xmin = 0, xmax = 65, ymin = 0, ymax = 35)
+c = plot_dot(dat, x = dat$Repeat, y = dat$TotalExpandedNorm, xlabel = "Repeat (%)", ylabel = "Total Missing / Gb (Mbp)", xmin = 0, xmax = 65, ymin = 0, ymax = 150)
 d = plot_dot(dat, x = dat$Repeat, y = dat$Genes, xlabel = "Repeat (%)", ylabel = "Num. Genes in Collapses", xmin = 0, xmax = 65, ymin = 0, ymax = 550)
-e = plot_dot(dat, x = dat$Repeat, y = dat$AvgCollapseSize, xlabel = "Repeat (%)", ylabel = "Avg. Collapse Size (kb)", xmin = 0, xmax = 65, ymin = 0, ymax = 40)
+e = plot_dot(dat, x = dat$Repeat, y = dat$AvgCollapseSize, xlabel = "Repeat (%)", ylabel = "Avg. Collapse Size (kbp)", xmin = 0, xmax = 65, ymin = 0, ymax = 40)
 f = plot_dot(dat, x = dat$Heterozygosity, y = dat$NumCollapses, xlabel = "Heterozygosity (%)", ylabel = "Num. Collapses", xmin = 0, xmax = 1.9, ymin = 0, ymax = 2500)
-g = plot_dot(dat, x = dat$GenomeSize, y = dat$NumCollapsesNorm, xlabel = "Genome Size (Gb)", ylabel = "Num. Collapses / Gb", xmin = 0, xmax = 5.5, ymin = 0, ymax = 800)
+g = plot_dot(dat, x = dat$GenomeSize, y = dat$NumCollapsesNorm, xlabel = "Genome Size (Gb)", ylabel = "Num. Collapses / Gbp", xmin = 0, xmax = 5.5, ymin = 0, ymax = 800)
 
 grid.arrange(a, b, c, d, nrow = 1)
 graph <- arrangeGrob(a, b, c, d, nrow = 1)
 ggsave(file = "output/ExtD4ad.png", width = 6, height = 1.5, graph)
+ggsave(file = "output/pub/ExtD4ad.pdf", width = 6, height = 1.5, graph, device=cairo_pdf)
+
 grid.arrange(e, f, g, nrow = 1)
 graph <- arrangeGrob(e, f, g, nrow = 1)
 ggsave(file = "output/ExtD4eg.png", width = 4.5, height = 1.5, graph)
+ggsave(file = "output/pub/ExtD4eg.pdf", width = 4.5, height = 1.5, graph, device=cairo_pdf)
+
+warnings()
 
 # Adjusted R squared and F-statistic p-value
 fit=lm(NumCollapses ~ Repeat, data = dat)

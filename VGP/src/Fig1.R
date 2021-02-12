@@ -106,7 +106,7 @@ d = plot_bar_flipped(dat$NumMisjoins, "Num. Mis-joins", red)
 grid.arrange(a, b, c, d, nrow = 1, widths = c(1.8,1,1,1))
 
 g <- arrangeGrob(a, b, c, d, nrow = 1, widths = c(1.8,1,1,1))
-ggsave(file = "output/Fig1a_d.png", width = 6, height = 2, g)
+ggsave(file = "output/Fig1a_d.pdf", width = 170, height = 50, g, units = "mm")
 
 
 ###########################################################################
@@ -129,9 +129,10 @@ ggplot(dat, aes(x = AssembledChrSize, y = KaryotypeSize)) +
   scale_y_log10(expand = c(0, 0.05), limits=c(1.5, 210),
                 breaks = c(3, 10, 30, 100)) +
   xlab("Assembled Chr. Size (Mb)") + ylab("Karyotype Size (Mb)") +
-  theme(axis.title = element_text(size=6, family = "Arial", face = "bold"),
-        axis.text  = element_text(size=6, family = "Arial"))
+  theme(axis.title = element_text(size=6, face = "bold"),
+        axis.text  = element_text(size=6))
 ggsave("output/Fig1_karyotype_loglog.png", width = 1.5, height = 1.5)
+ggsave("output/Fig1_karyotype_loglog.pdf", width = 40, height = 40, units = "mm", device=cairo_pdf)
 
 # Absolute scale
 ggplot(dat, aes(x = AssembledChrSize, y = KaryotypeSize)) +

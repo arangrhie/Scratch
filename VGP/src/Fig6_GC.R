@@ -37,20 +37,20 @@ shared_theme <- function(my_col, y_breaks) {
     theme_pubr(),
     scale_color_manual(values = my_col),
     scale_y_continuous(breaks = y_breaks),
-    theme(plot.title = element_text(size=7,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
+    theme(plot.title = element_text(size=6,face='bold', hjust = 0.5, margin=margin(0,0,0,0)),
           strip.text = element_blank(),
           strip.background = element_blank(),
           axis.line = element_line(size=0.2),
           legend.position = "bottom",
           legend.key.size = unit(3, "mm"),
-          legend.text = element_text(size=6),
-          legend.title = element_text(size=6),
+          legend.text = element_text(size=5),
+          legend.title = element_text(size=5),
           legend.margin=margin(c(0,0,0,0)),
-          axis.text.y = element_text(size=6),
-          axis.text.x =  element_text(size=6,hjust=0.5,vjust=0.4),
+          axis.text.y = element_text(size=5),
+          axis.text.x =  element_text(size=5,hjust=0.5,vjust=0.4),
           plot.margin = margin(t = 1, r = 4, b = 1, l = 1, unit = "pt"),
           axis.ticks = element_line(size=0.1),
-          axis.title = element_text(size=6, face='bold')),
+          axis.title = element_text(size=5)),
     guides(linetype=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
            shape=guide_legend(nrow = 2, keyheight = unit(3, "mm")),
            color = guide_legend(nrow = 2, keyheight = unit(3, "mm")))
@@ -66,6 +66,12 @@ transform_intron_position <- function(column) {
     return(column)
 }
 
+## Styles
+LINE_W = 0.2
+G_POINT_STROKE = 0.5
+G_POINT_SIZE = 0.7
+S_POINT_STROKE = 0.3
+S_POINT_SIZE = 0.3
 setwd("VGP")
 getwd()
 
@@ -158,10 +164,10 @@ y_breaks <- c(0, 10, 20, 30, 40, 50, 60, 70)
 
 gene_body_plot <- ggplot(aln_genic_df, aes(x = num_position, y = mean, color=sequence)) +
     draw_gene_body_lines +
-    geom_line( data = aln_intron_df, mapping = aes(y = mean, group = interaction(sequence, species)), linetype = "dashed", lwd=0.3) +
-    geom_line( data = aln_exon_df, mapping = aes(y = mean, group = interaction(sequence, species)), linetype = "solid", lwd=0.3) +
-    geom_point(data = aln_intron_df, mapping = aes(group=interaction(sequence, species), shape = species), size=0.7) +
-    geom_point(data = aln_exon_df, mapping = aes(group=interaction(type,species), shape = species), size=0.7) +
+    geom_line( data = aln_intron_df, mapping = aes(y = mean, group = interaction(sequence, species)), linetype = "dashed", lwd=LINE_W) +
+    geom_line( data = aln_exon_df, mapping = aes(y = mean, group = interaction(sequence, species)), linetype = "solid", lwd=LINE_W) +
+    geom_point(data = aln_intron_df, mapping = aes(group=interaction(sequence, species), shape = species), size=G_POINT_SIZE, stroke = G_POINT_STROKE) +
+    geom_point(data = aln_exon_df, mapping = aes(group=interaction(type,species), shape = species), size=G_POINT_SIZE, stroke = G_POINT_STROKE) +
     scale_shape_manual(values = c(2,3,4,8), name = "Species") +
     scale_x_continuous(name="Intron", breaks = c(1.5, 2.5, 3, 3.5, 4.5), labels=c("5'UTR", "First", " ", "Last", "3'UTR"),
                        sec.axis=sec_axis(~. + 0, name="Exon", breaks = c(1,2,3,4,5), labels=c("5'UTR", "First", "Internal", "Last", "3'UTR  "))) +
@@ -171,8 +177,8 @@ gene_body_plot <- ggplot(aln_genic_df, aes(x = num_position, y = mean, color=seq
 gene_body_plot
 
 up_plot <- ggplot(aln_up_2kb_df, aes(x = num_position, y = mean, color=sequence)) +
-    geom_line(aes(group=interaction(sequence,species)),  lwd=0.3, alpha=0.7) +
-    geom_point(aes(group=interaction(sequence,species), shape = species), size=0.7) +
+    geom_line(aes(group=interaction(sequence,species)),  lwd=LINE_W, alpha=0.7) +
+    geom_point(aes(group=interaction(sequence,species), shape = species), size=G_POINT_SIZE, stroke = G_POINT_STROKE) +
     scale_shape_manual(values=c(2,3,4,8), name = "Species") +
     scale_x_continuous(breaks=c(1,10,20), labels=up_2kb_labels, name=" ", 
                        sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
@@ -182,15 +188,15 @@ up_plot <- ggplot(aln_up_2kb_df, aes(x = num_position, y = mean, color=sequence)
 up_plot
 
 down_plot <- ggplot(aln_down_2kb_df, aes(x = num_position, y = mean, color=sequence)) +
-    geom_line(aes(group=interaction(sequence,species)),  lwd=0.3, alpha=0.7) +
-    geom_point(aes(group=interaction(sequence,species), shape = species), size=0.7) +
+    geom_line(aes(group=interaction(sequence,species)),  lwd=LINE_W, alpha=0.7) +
+    geom_point(aes(group=interaction(sequence,species), shape = species), size=G_POINT_SIZE, stroke = G_POINT_STROKE) +
     scale_shape_manual(values=c(2,3,4,8), name = "Species")+
     scale_x_continuous(breaks=c(1,10,20), labels=down_2kb_labels, name="(kbp)",
                        sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
     coord_cartesian(ylim=c(0, 75), xlim=c(0.5, 20.5), expand=FALSE)+
     labs(color="Sequence", title="Downstream") + 
     shared_theme(my_col2, y_breaks) +
-    theme(axis.title.x = element_text(size=6, face='bold', hjust=1))
+    theme(axis.title.x = element_text(size=5, face='bold', hjust=1))
 down_plot
 
 gc_missing_plot <- arrangeGrob(up_plot + theme(legend.position="none", axis.title.y = element_blank()),
@@ -198,7 +204,7 @@ gc_missing_plot <- arrangeGrob(up_plot + theme(legend.position="none", axis.titl
                                  down_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank()),
                                  ncol = 3,
                                  left = textGrob("GC Content (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
-ggsave("output/Fig6_gc_missing.png", gc_missing_plot, width=6, height=2.1,units = "in")
+#ggsave("output/pub/Fig4a_gc_missing.pdf", gc_missing_plot, width=120, height=45, units = "mm")
 legend1 = gtable_filter(ggplotGrob(down_plot), "guide-box")
 
 #####################################################################
@@ -275,9 +281,9 @@ y_breaks = c(30, 40, 50, 60, 70)
 # (3-1) gene body plot
 gene_body_plot <- ggplot(genic_df, aes(x =numeric_position, y = GC_mean, color=clade)) +
     draw_gene_body_lines +
-    geom_line(aes(group=interaction(type,clade), linetype = type), lwd=0.3) +
-    geom_point(aes(group=interaction(type,clade), shape = type), size=0.4) +
-    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade, group = interaction(type,clade), linetype = type), width=0.1, alpha=0.5, size = 0.3) +
+    geom_line(aes(group=interaction(type,clade), linetype = type), lwd=LINE_W) +
+    geom_point(aes(group=interaction(type,clade), shape = type), size=S_POINT_SIZE) +
+    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade, group = interaction(type,clade), linetype = type), width=0.1, alpha=0.5, size = LINE_W) +
     scale_shape_manual(values=c(19,1), labels=c("Exon or Up/Downstream", "Intron"))+
     scale_linetype(labels=c("Exon or Up/Downstream", "Intron")) +
     coord_cartesian(ylim=c(25,75), xlim=c(0.75,5.25), expand=FALSE)+
@@ -287,9 +293,9 @@ gene_body_plot
 
 # (3-2) upstream 30Kbp plot
 up_plot <- ggplot(up_30kb_df, aes(x = numeric_position, y = GC_mean, color=clade)) +
-    geom_line(aes(group=clade), lwd=0.3) +
-    geom_point(aes(group=clade), size=0.4) +
-    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade), width = 0.05, alpha = 0.5, size = 0.3) +
+    geom_line(aes(group=clade), lwd=LINE_W) +
+    geom_point(aes(group=clade), size=S_POINT_SIZE) +
+    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade), width = 0.05, alpha = 0.5, size = LINE_W) +
     scale_x_continuous(breaks = c(1,100,200,300), labels = up_30kb_labels, trans = reverselog_trans(10), name="",
                        sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
     coord_cartesian(ylim=c(25,75), xlim = c(350, 0.8), expand=FALSE) +
@@ -299,15 +305,15 @@ up_plot
 
 # (3-3) downstream 30Kbp plot
 down_plot <- ggplot(down_30kb_df, aes(x = numeric_position, y = GC_mean, color=clade)) +
-    geom_line(aes(group=clade), lwd=0.3) +
-    geom_point(aes(group=clade), size=0.4) +
-    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade), width = 0.05, alpha = 0.5, size = 0.3) +
+    geom_line(aes(group=clade), lwd=LINE_W) +
+    geom_point(aes(group=clade), size=S_POINT_SIZE) +
+    geom_errorbar(aes(ymin = GC_mean - GC_sd, ymax = GC_mean + GC_sd, color = clade), width = 0.05, alpha = 0.5, size = LINE_W) +
     scale_x_log10(breaks=c(1,100,200,300), labels = down_30kb_labels, name="(kbp)",
                   sec.axis=sec_axis(~. + 0, name=" ", breaks = c(1), labels=c(" "))) + 
     coord_cartesian(ylim=c(25,75), xlim = c(0.8, 350), expand=FALSE) +
     labs(color="Clade", title="Downstream", x="(kbp)") + 
     shared_theme(my_col, y_breaks) +
-    theme(axis.title.x = element_text(size=6, face='bold', hjust=1))
+    theme(axis.title.x = element_text(size=5, face='bold', hjust=1))
 down_plot
 
 # (3-4) combine all plots into one
@@ -317,7 +323,12 @@ clade_gc_plot <- arrangeGrob(up_plot + theme(legend.position="none", axis.title.
                              down_plot + theme(legend.position="none", axis.title.y = element_blank(), axis.text.y = element_blank(), plot.title = element_blank()),
                              ncol = 3,
                              left = textGrob("GC Content (%)", rot = 90, vjust = 0, gp = gpar(cex = 0.5, fontface = "bold")))
-ggsave("output/Fig6_gc_content_by_clades_sd.png", clade_gc_plot, width=6, height=2,units = "in")
+#ggsave("output/Fig6_gc_content_by_clades_sd.png", clade_gc_plot, width=6, height=2, units = "in")
+#ggsave("output/pub/Fig4b_gc_content_by_clades_sd.pdf", clade_gc_plot, width=120, height=45, units = "mm")
+
+p <- arrangeGrob(gc_missing_plot, clade_gc_plot, nrow = 2)
+ggsave("output/pub/Fig4.pdf", p, width=120, height=90, units = "mm", device=cairo_pdf)
+
 legend2 = gtable_filter(ggplotGrob(down_plot), "guide-box")
 legend3 = gtable_filter(ggplotGrob(gene_body_plot), "guide-box")
 
@@ -325,9 +336,9 @@ legend3 = gtable_filter(ggplotGrob(gene_body_plot), "guide-box")
 #### [ Fig. 6b 3. Drawing legends ] ####
 ########################################
 labels_plot <- arrangeGrob(legend1)
-ggsave("output/Fig6_legend1.png", labels_plot, width=3.2, height=0.3,units = "in")
+ggsave("output/pub/Fig4_legend1.pdf", labels_plot, width=3.2, height=0.3, units = "in", device=cairo_pdf)
 labels_plot <- arrangeGrob(legend2)
-ggsave("output/Fig6_legend2.png", labels_plot, width=2, height=0.3,units = "in")
+ggsave("output/pub/Fig4_legend2.pdf", labels_plot, width=2, height=0.3, units = "in", device=cairo_pdf)
 labels_plot <- arrangeGrob(legend3)
-ggsave("output/Fig6_legend3.png", labels_plot, width=3.5, height=0.3,units = "in")
+ggsave("output/pub/Fig4_legend3.pdf", labels_plot, width=3.5, height=0.3, units = "in", device=cairo_pdf)
 

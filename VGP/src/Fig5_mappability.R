@@ -24,8 +24,8 @@ plot_mappability <- function(dat, label) {
     #xlab(label) +
     theme_classic() +
     theme(
-      axis.title = element_text(face="bold", family = "Arial", size=6),
-      axis.text = element_text(face="bold", family = "Arial", size=5),
+      axis.title = element_text(face="bold", size=6),
+      axis.text = element_text(face="bold", size=5),
       legend.position = "none",
       legend.title = element_blank(),
       legend.key = element_blank()) +
@@ -41,8 +41,8 @@ plot_annotation_2 <- function(dat, label, y_limit) {
     geom_bar(position=position_stack(), stat="identity", color="black") +
     theme_classic() +
     theme(
-      axis.title = element_text(face="bold", family = "Arial", size=6),
-      axis.text = element_text(face="bold", family = "Arial", size=5),
+      axis.title = element_text(face="bold", size=6),
+      axis.text = element_text(face="bold", size=5),
       legend.position = "none",
       legend.title = element_blank(),
       legend.key = element_blank()) +
@@ -59,8 +59,8 @@ plot_annotation <- function(dat, label, y_limit) {
     #xlab(label) +
     theme_classic() +
     theme(
-      axis.title = element_text(face="bold", family = "Arial", size=6),
-      axis.text = element_text(face="bold", family = "Arial", size=5),
+      axis.title = element_text(face="bold", size=6),
+      axis.text = element_text(face="bold", size=5),
       legend.position = "none",
       legend.title = element_blank(),
       legend.key = element_blank()) +
@@ -91,15 +91,15 @@ p <- ggplot(data=rna_dat, aes(x=Stat, y=Percent, fill=Assembly)) +
   scale_fill_manual(values = my_col) +
   scale_y_continuous(expand = c(0, 0), limits=c(0, 100)) +
   theme(
-    axis.title = element_text(face="bold", family = "Arial", size=6),
-    axis.text = element_text(face="bold", family = "Arial", size=5),
+    axis.title = element_text(face="bold", size=5),
+    axis.text = element_text(face="bold", size=5),
     axis.line.x=element_blank(),
     axis.ticks.x=element_blank(),
     panel.grid.minor.x=element_blank(),
     panel.grid.major.x=element_blank(),
     legend.position = "left",
-    legend.text = element_text(family = "Arial", size = 6),
-    legend.title = element_text(face="bold", family = "Arial", size = 7))
+    legend.text = element_text(size = 5),
+    legend.title = element_text(face="bold", size = 5))
 p
 legend <- get_legend(p)
 
@@ -124,6 +124,7 @@ d <- plot_annotation(partial_dat, "Partial Coding Genes", 6000)
 c
 d
 # g <- arrangeGrob(legend, a, b, c, d, nrow = 1)
-plot_grid(legend, a, b, c, d, nrow = 1, rel_widths = c(0.1, 0.2, 0.2, 0.25, 0.25))
-ggsave(file = "output/Fig5ad.png", width = 6.5, height = 1.5)
+plot_grid(legend, a, b, c, d, nrow = 1, rel_widths = c(0.08, 0.18, 0.18, 0.28, 0.28))
+ggsave(file = "output/pub/Fig3ad.pdf", width = 120, height = 30, units = "mm")
+#ggsave(file = "output/Fig5ad.png", width = 6.5, height = 1.5)
 
