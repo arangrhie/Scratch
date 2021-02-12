@@ -61,7 +61,7 @@ getwd()
 #
 # Ext. Data Fig. 4a-g
 #
-dat = read.table("input/ExtD4/summary_collapses.tab", header = T)
+dat = read.table("input/ED_Fig4/summary_collapses.tab", header = T)
 head(dat)
 
 a = plot_dot(dat, x = dat$Repeat, y = dat$NumCollapses, xlabel = "Repeat (%)", ylabel = "Num. Collapses", xmin = 0, xmax = 65, ymin = 0, ymax = 2500)
@@ -74,15 +74,13 @@ g = plot_dot(dat, x = dat$GenomeSize, y = dat$NumCollapsesNorm, xlabel = "Genome
 
 grid.arrange(a, b, c, d, nrow = 1)
 graph <- arrangeGrob(a, b, c, d, nrow = 1)
-ggsave(file = "output/ExtD4ad.png", width = 6, height = 1.5, graph)
-ggsave(file = "output/pub/ExtD4ad.pdf", width = 6, height = 1.5, graph, device=cairo_pdf)
+#ggsave(file = "output/ED_Fig4ad.png", width = 6, height = 1.5, graph)
+ggsave(file = "output/pub/ED_Fig4ad.pdf", width = 6, height = 1.5, graph, device=cairo_pdf)
 
 grid.arrange(e, f, g, nrow = 1)
 graph <- arrangeGrob(e, f, g, nrow = 1)
-ggsave(file = "output/ExtD4eg.png", width = 4.5, height = 1.5, graph)
-ggsave(file = "output/pub/ExtD4eg.pdf", width = 4.5, height = 1.5, graph, device=cairo_pdf)
-
-warnings()
+#ggsave(file = "output/ED_Fig4eg.png", width = 4.5, height = 1.5, graph)
+ggsave(file = "output/pub/ED_Fig4eg.pdf", width = 4.5, height = 1.5, graph, device=cairo_pdf)
 
 # Adjusted R squared and F-statistic p-value
 fit=lm(NumCollapses ~ Repeat, data = dat)
@@ -107,38 +105,25 @@ fit=lm(NumCollapsesNorm ~ GenomeSize, data = dat)
 summary(fit)
 
 #
-# Test data that is ignored on the command line
+# Input files
 #
-allRepeats <- read.table("input/ExtD4/all_species.orig.tab")
+allRepeats <- read.table("input/ED_Fig4/all_species.orig.tab")
 head(allRepeats)
-reptab <- read.table("input/ExtD4/all_repeat_summary.with_wm.orig.tsv")
+reptab <- read.table("input/ED_Fig4/all_repeat_summary.with_wm.orig.tsv")
 head(reptab)
-asmtab <- read.table("input/ExtD4/assembly_size.txt")
+asmtab <- read.table("input/ED_Fig4/assembly_size.txt")
 head(asmtab)
-collapsedRepeatContentHighCopy <- "output/ExtD4_collapsed.dist.hc.pdf"
-collapsedRepeatContentLowCopy <- "output/ExtD4_collapsed.dist.lc.pdf"
-allSpeciesPlot <- "output/ExtD4_all_dups.orig.pdf"
+
+# Output file names
+allSpeciesPlot <- "output/pub/ED_Fig4h_all_dups.orig.pdf"
+collapsedRepeatContentHighCopy <- "output/pub/ED_Fig4i_collapsed.dist.hc.pdf"
+collapsedRepeatContentLowCopy <- "output/pub/ED_Fig4j_collapsed.dist.lc.pdf"
 cl <- "orig"
-
-#
-# Running as a script
-#
-args <- commandArgs(trailingOnly=T)
-
-reptab <- read.table(args[1])
-asmtab <- read.table(args[2])
-collapsedRepeatContentHighCopy <- args[3]
-collapsedRepeatContentLowCopy <- args[4]
-allSpeciesTab <- args[5]
-allSpeciesPlot <- args[6]
-cl <- args[7]
-allRepeats <- read.table(allSpeciesTab)
 
 asmNames <- asmtab$V1
 p        <- rainbow(length(asmNames))
 names(p) <- asmNames
 p
-
 
 f <- as.numeric(as.factor(allRepeats$V1))
 u <- unique(allRepeats$V1)
@@ -267,10 +252,4 @@ ggplot(data=lowCP, aes(x=rep, y=V3, fill=V1)) +
   scale_fill_manual(name="Species", values=p)
 dev.off()       
 
-                    
-theme(axis.title=element_text(size=12),
-      axis.text.y=element_text(size=12),
-      axis.text=element_text(size=12),
-      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=12),
-      panel.grid.major = element_line(colour="lightgrey", size=0.5, linetype="solid"),
-      panel.background=element_blank(), panel.grid.minor = element_blank() )
+
