@@ -1,5 +1,6 @@
 require("ggplot2")
 require("scales")
+library(cowplot)
 
 gray = "black"
 red = "#E41A1C"
@@ -10,6 +11,17 @@ orange = "#FF7F00"  # orange = "#E69F00"
 yellow = "#FFFF33"
 
 ALPHA=0.4
+
+fancy_scientific <- function(d) {
+    # turn in to character string in scientific notation
+    d <- format(d, scientific = TRUE)
+    # quote the part before the exponent to keep all the digits and turn the 'e+' into 10^ format
+    d <- gsub("^(.*)e\\+", "'\\1'%*%10^", d)
+    # convert 0x10^00 to 0
+    d <- gsub("\\'0[\\.0]*\\'(.*)", "'0'", d)
+    # return this as an expression
+    parse(text=d)
+}
 
 merqury_col = c(gray, red, blue, green, purple, orange)
 
@@ -149,6 +161,8 @@ spectra_cn_plot  <-  function(hist, name="out", zero="", cutoff="", w=6, h=4.5, 
     p
 }
 
+getwd()
+setwd("VGP")
 genomes = read.table("input/Supp_Fig2/genomes.list.srt", header=F)
 colnames(genomes) = c("Genome")
 genomes
