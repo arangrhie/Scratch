@@ -2,10 +2,11 @@ library(ggplot2)
 library(scales)
 
 getwd()
-setwd("../T2T")
+setwd("T2T")
 greenPalette=c("#CCFFCC", "#009E50")
 dat=read.table("input/markers.dxz1.dat", header=T)
 head(dat)
+tail(dat)
 max(dat$Spacing)
 summary(dat[dat$Category == "DXZ1",]$Spacing)
 
