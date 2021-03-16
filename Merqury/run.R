@@ -2,9 +2,9 @@
 ### Test merqury plotting scripts
 ###################################
 
-
 # Load plot_blob.R
 setwd("./Merqury/")
+source("./src/plot_spectra_cn.R")
 source("./src/plot_blob.R")
 
 ### Fig. 4 c-e, smaller fig to enlarge axis fonts
@@ -21,6 +21,9 @@ dat = "input/canu.hapmers.count"
 dat=read.table(dat, header=TRUE)
 plot_blob_exact(dat)
 plot_blob_scaled(dat)
+
+### Fig. 1
+spectra_cn_plot(hist = "input/paper/read_only.hist", name = "output/paper/read-only", type = "fill", pdf = TRUE, w = 3.5, h = 3, x_max = 100, y_max = 4500000)
 
 
 ### Fig. 4 f-k, fixed Y max
