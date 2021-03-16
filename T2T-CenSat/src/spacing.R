@@ -106,7 +106,7 @@ stats(dat)
 plot_violin(dat)
 ggsave("output/chm13.v1.cen_v2.marker_density.k51.violin.pdf", width = 4.5, height = 3, device=cairo_pdf)
 
-dat=read.table("input/k21.spacing.all", header=F)
+dat=read.table(gzfile("input/k21.spacing.all.gz"), header=F)
 names(dat) <- c("Spacing", "Category")
 stats(dat)
 #plot_density_log(dat)
@@ -115,14 +115,14 @@ plot_violin(dat)
 ggsave("output/chm13.v1.cen_v2.marker_density.k21.violin.pdf", width = 4.5, height = 3, device=cairo_pdf)
 
 ## marker distance, k=21, ct_*(*_arm) moved to no_cen
-dat=read.table("input/k21.spacing", header=F)
+dat=read.table(gzfile("input/k21.spacing.gz"), header=F)
 names(dat) <- c("Spacing", "Category")
 stats(dat)
 plot_violin(dat)
 ggsave("output/chm13.v1.cen_v2.marker_density.k21.violin.no_ct_arm.pdf", width = 4.5, height = 3, device=cairo_pdf)
 
 ## HOR and HSat1-3 Spacing
-dat=read.table("input/hor_and_hsat.spacing", header=F)
+dat=read.table(gzfile("input/hor_and_hsat.spacing.gz"), header=F)
 names(dat) <- c("Spacing", "Category", "k")
 stats(dat)
 dat$k = factor(dat$k)
