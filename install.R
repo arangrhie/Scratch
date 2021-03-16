@@ -13,3 +13,7 @@ library(cowplot)
 .libPaths()
 
 Sys.getenv('R_LIBS')
+
+# for loading large numbers
+install.packages('bit64')
+library(bit64)
