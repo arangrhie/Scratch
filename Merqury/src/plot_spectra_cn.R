@@ -35,7 +35,7 @@ merqury_brw <- function(dat, direction=1) {
 }
 
 ALPHA=0.4
-LINE_SIZE=0.3
+LINE_SIZE=0.27
 
 fancy_scientific <- function(d) {
   # turn in to character string in scientific notation
