@@ -1,0 +1,95 @@
+
+        <html>
+        <head>
+            <style>
+                .thumbnail
+                {
+                    text-decoration:none;
+                    color:black;
+                    font-weight:bold;
+                }
+                .thumbnail span  /*CSS for enlarged image*/
+                {
+                    visibility: hidden;
+                    position: absolute;
+                    padding: 5px;
+                    border: 1px solid #000;
+                    background-color: #e5e5e5;
+                }
+                .thumbnail:hover span  /*CSS for enlarged image on hover*/
+                {
+                    visibility: visible;
+                    left: 550px;
+                    top: 10px;
+                }
+                .imgs td
+                {
+                    vertical-align:middle;
+                    padding: 0.5em;
+                    border: 1px solid black;
+                }
+                table.imgs
+                {
+                    border-collapse:collapse;
+                    margin-left:20px;
+                }
+                .nums th
+                {
+                    text-align: left;
+                }
+                table.nums
+                {
+                    margin-top: 1em;
+                    margin-left:20px;
+                    border: 1px dotted #83A4C3;
+                    background-color: #F5F5F5;
+                    padding: 0.5em;
+                }
+                .pad { padding-left:1em; vertical-align:top; }
+                .right { text-align:right; padding-left:1em; }
+            </style>
+        </head>
+        <body>
+            <table class="imgs">
+    <tr><td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-insert-size.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-insert-size.png" width="150px"><span>Insert size<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-insert-size.png"></span></a>
+<td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-gc-content.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-gc-content.png" width="150px"><span>GC content<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-gc-content.png"></span></a>
+<td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-acgt-cycles.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-acgt-cycles.png" width="150px"><span>Per-base sequence content<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-acgt-cycles.png"></span></a>
+</tr>
+<tr><td>
+<td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals.png" width="150px"><span>Quality per cycle<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals.png"></span></a>
+<td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals2.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals2.png" width="150px"><span>Quality per cycle<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals2.png"></span></a>
+</tr>
+<tr><td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals3.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals3.png" width="150px"><span>Quality per cycle<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals3.png"></span></a>
+<td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals-hm.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals-hm.png" width="150px"><span>Quality per cycle<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-quals-hm.png"></span></a>
+<td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-indel-cycles.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-indel-cycles.png" width="150px"><span>Indels per cycle<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-indel-cycles.png"></span></a>
+</tr>
+<tr><td><a class="thumbnail" href="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-indel-dist.png"><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-indel-dist.png" width="150px"><span>Indel lengths<br><img src="dovetail9_to_pacbio_falcon_pa_pilon_ponly.paired-indel-dist.png"></span></a>
+<td>
+
+        </table>
+
+        <table class="nums">
+            <tr><th>Reads</tr>
+            <tr>
+                <td class="pad"><table>
+                <tr><td>total:       <td class="right"> 134,773,014    <td class="right"></tr>
+                <tr><td>filtered:    <td class="right"> 0 <td class="right"> (0.0%)</tr>
+                <tr><td>non-primary: <td class="right"> 0  <td class="right"> </tr>
+                <tr><td>duplicated:  <td class="right"> 0      <td class="right"> (0.0%)</tr>
+                <tr><td>mapped:      <td class="right"> 132,129,861   <td class="right"> (98.0%)</tr>
+                <tr><td>zero MQ:     <td class="right"> 14,749,031      <td class="right"> (11.2%)</tr>
+                <tr><td>avg read length: <td class="right"> 151    <td class="right"></tr>
+                </table></tr>
+
+            <tr><th>Bases</tr>
+            <tr>
+                <td class="pad"><table>
+                <tr><td>total:       <td class="right"> 20,350,725,114    <td class="right"></tr>
+                <tr><td>mapped:      <td class="right"> 19,450,476,905   <td class="right"> (95.6%)</tr>
+                <tr><td>error rate:      <td class="right"> 0.53%  <td class="right"></tr>
+                </table></tr>
+        </table>
+
+        </body>
+        </html>
+    
