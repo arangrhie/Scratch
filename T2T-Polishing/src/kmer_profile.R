@@ -2,20 +2,32 @@ library(ggplot2)
 library(scales)
 library(data.table)
 library(cowplot)
-# install.packages('bit64')
-# library("bit64")
+#install.packages('bit64')
+#library("bit64")
 
 getwd()
 setwd("T2T-Polishing")
 
 plot_heatmap <- function(dat = NULL, cnt, title = "", x_min = 0, x_max, y_max, pattern, counts) {
-    p <- ggplot(dat, aes(x = V2, y = V1)) +
-        geom_raster(aes(fill = cnt)) +
+    p <- ggplot(dat, aes(x = V2, y = V1, fill = cnt)) +
+        geom_tile() +
+        scale_fill_gradient(low = "#377EB8",
+                            high = "white",
+                            guide = "colorbar") +
         theme_bw() +
         ggtitle(title) +
         labs(fill = counts) +
         scale_x_continuous("kmer multiplicity", expand = c(0, 0), limits=c(x_min, x_max)) +
-        scale_y_continuous(paste(pattern, "in 21-mers", sep=" "), expand = c(0, 0), limits=c(0, y_max))
+        scale_y_continuous(paste(pattern, "in 21-mers", sep=" "), expand = c(0, 0), limits=c(0, y_max)) +
+        theme(text = element_text(size = 6),
+              plot.title = element_text(size=6, face = "bold"),
+              axis.title = element_text(size=6, face = "bold"),
+              axis.text  = element_text(size=5),
+              legend.key.size = unit(2, "mm"),
+              legend.key.height = unit(2, "mm"), #change legend key height
+              legend.text = element_text(size=5),
+              legend.title = element_text(size=5),
+              legend.margin=margin(c(0,0,0,0)))
     return(p)
 }
 
@@ -28,36 +40,44 @@ plot_heatmap_logx <- function(dat = NULL, cnt, title = "", x_min = 0, x_max, pat
         scale_x_log10("kmer multiplicity",
                       breaks = trans_breaks("log10", function(x) 10^x),
                       labels = trans_format("log10", math_format(10^.x))) +
-        scale_y_continuous(paste(pattern, "in 21-mers", sep=" "), expand = c(0, 0), limits=c(0, 11))
+        scale_y_continuous(paste(pattern, "in 21-mers", sep=" "), expand = c(0, 0), limits=c(0, 11)) +
+        theme(text = element_text(size = 6),
+            plot.title = element_text(size=6, face = "bold"),
+            axis.title = element_text(size=6, face = "bold"),
+            axis.text  = element_text(size=5),
+            legend.key.size = unit(2, "mm"),
+            legend.text = element_text(size=5),
+            legend.title = element_text(size=5),
+            legend.margin=margin(c(0,0,0,0)))
     return(p)
 }
 
-plot_by_multiplicity <- function(dat1, dat2, y_max, peak1, peak2, cp, pattern, outdir) {
+plot_by_multiplicity <- function(dat1, dat2, y_max, peak1, peak2, cp, pattern) {
     x_max1=peak1 * cp
     x_max2=peak2 * cp
     
     m1 <- plot_heatmap(dat1, dat1$LogCount,
-                       paste("PacBio HiFi20k (", cp, "x)", sep=""),
+                       "Missing in Illumina, found in HiFi",
                        x_min = 0, x_max = x_max1, y_max = y_max, pattern = pattern, counts = "log(Count)")
     m2 <- plot_heatmap(dat2, dat2$LogCount,
-                       paste("Illumina PCR-Free (", cp, "x)", sep=""),
+                       "Missing in HiFi, found in Illumina",
                        x_min = 0, x_max = x_max2, y_max = y_max, pattern = pattern, counts = "log(Count)")
     plot_grid(m1, m2, nrow = 1, rel_widths = c(0.5, 0.5))
-    ggsave(paste("output/", outdir, "/", pattern, "_log_count_", cp, "x.png", sep=""),
-           width = 8, height = 3)
+    ggsave(paste("output/", pattern, "_log_count_", cp, "x.pdf", sep=""),
+           width = 4, height = 1.7)
     
     m1 <- plot_heatmap(dat1, dat1$V3,
-                       paste("PacBio HiFi20k (", cp, "x)", sep=""),
+                       "Missing in Illumina, found in HiFi",
                        x_min = 0, x_max = x_max1, y_max = y_max,
                        pattern = pattern, counts = "Count")
     
     m2 <- plot_heatmap(dat2, dat2$V3,
-                       paste("Illumina PCR-Free (", cp, "x)", sep=""),
+                       "Missing in HiFi, found in Illumina",
                        x_min = 0, x_max = x_max2, y_max = y_max,
                        pattern = pattern, counts = "Count")
     plot_grid(m1, m2, nrow = 1, rel_widths = c(0.5, 0.5))
-    ggsave(paste("output/", outdir, "/", pattern, "_count_", cp, "x.png", sep=""),
-           width = 8, height = 3)
+    ggsave(paste("output/", pattern, "_count_", cp, "x.pdf", sep=""),
+           width = 4, height = 1.7)
 }
 # contour lines
 # m + geom_density_2d()
@@ -66,6 +86,45 @@ plot_by_multiplicity <- function(dat1, dat2, y_max, peak1, peak2, cp, pattern, o
 peak1=31
 peak2=105
 y_max=21
+
+########### 0904 ver. ############
+# Plot G/C of the missings kmer
+dat1=fread("input/illumina.0.hifi.meryl.GC.hist", header=F)
+dat1$LogCount=log(dat1$V3, base = 10)
+summary(dat1)
+
+dat2=fread("input/hifi.0.illm.meryl.GC.hist", header=F)
+head(dat2)
+# To handle "Don't know how to automatically pick scale for object of type integer64. Defaulting to continuous." error
+# dat2$V3=dat2$V3/4
+dat2$LogCount=log(dat2$V3, base = 10)
+summary(dat2)
+
+y_max=max(dat1$V1)
+
+plot_by_multiplicity(dat1, dat2, y_max, peak1, peak2, 3, "GC")
+
+# Plot GA/TC dimer of the missings kmer
+dat1=fread("input/illumina.0.hifi.meryl.GA_TC.hist", header=F)
+dat1$LogCount=log(dat1$V3, base = 10)
+summary(dat1)
+
+dat2=fread("input/hifi.0.illm.meryl.GA_TC.hist", header=F)
+head(dat2)
+# To handle "Don't know how to automatically pick scale for object of type integer64. Defaulting to continuous." error
+# dat2$V3=dat2$V3
+dat2$LogCount=log(dat2$V3, base = 10)
+summary(dat2)
+
+# y axis max
+y_max=max(dat1$V1)
+
+plot_by_multiplicity(dat1, dat2, y_max, peak1, peak2, 3, "GA")
+
+
+
+
+
 
 ########### 0915 ver. ############
 dat1=fread("input/exclusive_0915/illumina.0.no_hifi_0.hifim.meryl.GA_TC.hist", header=F)
@@ -137,79 +196,6 @@ for ( cp in c(3, 10, 50, 100, 500, 1000, 5000)) {
 
 
 
-
-########### 0904 ver. ############
-# Plot GA/TC dimer of the missings kmer
-dat1=fread("input/exclusive/hifi-only.meryl.GA_TC.hist", header=F)
-dat1$LogCount=log(dat1$V3, base = 10)
-summary(dat1)
-
-dat2=fread("input/exclusive/illumina-only.meryl.GA_TC.hist", header=F)
-head(dat2)
-# To handle "Don't know how to automatically pick scale for object of type integer64. Defaulting to continuous." error
-dat2$V3=dat2$V3/2
-dat2$LogCount=log(dat2$V3, base = 10)
-summary(dat2)
-
-# y axis max
-y_max=max(dat1$V1)
-
-for ( cp in c(3, 10, 50, 100, 500, 1000, 5000)) {
-    plot_by_multiplicity(dat1, dat2, y_max, peak1, peak2, cp, "GA", "exclusive")
-}
-
-# Plot G/C of the missings kmer
-dat2=fread("input/exclusive/hifi-only.meryl.GC.hist", header=F)
-dat1$LogCount=log(dat1$V3, base = 10)
-summary(dat1)
-
-dat2=fread("input/exclusive/illumina-only.meryl.GC.hist", header=F)
-head(dat2)
-# To handle "Don't know how to automatically pick scale for object of type integer64. Defaulting to continuous." error
-dat2$V3=dat2$V3/4
-dat2$LogCount=log(dat2$V3, base = 10)
-summary(dat2)
-
-y_max=max(dat1$V1)
-
-for ( cp in c(3, 10, 50, 100, 500, 1000, 5000)) {
-    plot_by_multiplicity(dat1, dat2, y_max, peak1, peak2, cp, "GC", "exclusive")
-}
-
-
-
-# Plot GA/TC dimer of the missings kmer
-dat1=fread("input/missings/hifi.0.illm.meryl.GA_TC.hist", header=F)
-dat1$LogCount=log(dat1$V3, base = 10)
-summary(dat1)
-
-dat2=fread("input/missings/illumina.0.hifim.meryl.GA_TC.hist", header=F)
-head(dat2)
-dat2$LogCount=log(dat2$V3, base = 10)
-summary(dat2)
-
-# y axis max
-y_max=max(dat1$V1)
-
-for ( cp in c(3, 10, 50, 100, 500, 1000, 5000)) {
-    plot_by_multiplicity(dat1, dat2, y_max, peak1, peak2, cp, "GA")
-}
-
-# Plot G/C of the missings kmer
-dat2=fread("input/missings/hifi.0.illm.meryl.GC.hist", header=F)
-dat1$LogCount=log(dat1$V3, base = 10)
-summary(dat1)
-
-dat2=fread("input/missings/illumina.0.hifim.meryl.GC.hist", header=F)
-head(dat2)
-dat2$LogCount=log(dat2$V3, base = 10)
-summary(dat2)
-
-y_max=max(dat1$V1)
-
-for ( cp in c(3, 10, 50, 100, 500, 1000, 5000)) {
-    plot_by_multiplicity(dat1, dat2, y_max, peak1, peak2, cp, "GC")
-}
 
 
 ###################### Experimental ###########################
