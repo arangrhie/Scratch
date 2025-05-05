@@ -59,3 +59,10 @@ Unorganized codes for generating initial panels of Fig. 6 and ED Fig. 11. See [h
 Cite:
 
 Rhie, A., Nurk S., and Cechova, M. et al., The complete sequence of a human Y chromosome. Nature (2023). https://www.nature.com/articles/s41586-023-06457-y
+
+## T2T-Primates, T2T-Browser
+
+Stubs for the T2T Primates paper.
+
+Cite: Yoo et al., Complete sequencing of ape genomes. Nature (2025) https://www.nature.com/articles/s41586-025-08816-3
+
