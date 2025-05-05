@@ -51,3 +51,11 @@ Code for generating HG002 benchmark result figure (Fig. 1) and genome size as a 
 Cite:
 
 Formenti, G., Rhie, A., Walenz, B.P. et al. Merfin: improved variant filtering, assembly evaluation and polishing via k-mer validation. Nat Methods (2022). https://doi.org/10.1038/s41592-022-01445-y
+
+## T2T-HG002Y
+
+Unorganized codes for generating initial panels of Fig. 6 and ED Fig. 11. See [here](https://github.com/arangrhie/T2T-HG002Y) for a more comprehensive code by section.
+
+Cite:
+
+Rhie, A., Nurk S., and Cechova, M. et al., The complete sequence of a human Y chromosome. Nature (2023). https://www.nature.com/articles/s41586-023-06457-y
