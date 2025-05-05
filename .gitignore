@@ -2,5 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-Merqury/Merqury.Rproj
-
+.Rproj
+.DS_Store
+.vscode
