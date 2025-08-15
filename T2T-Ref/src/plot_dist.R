@@ -4,6 +4,39 @@ library(dplyr)
 
 setwd("T2T-Ref/")
 
+# Plot one
+plot_one_dist <- function(dat = null, out, target = "DJ") {
+
+    dat_one = dat %>% select(Sample, all_of(target))
+
+    # Melt the data
+    data_melt <- melt(dat_one, id.vars = "Sample", variable.name = "Category", value.name = "Copies")
+    head(data_melt)
+    max(data_melt$Copies)
+
+    data_melt$Category <- factor(data_melt$Category, levels = c(target))
+
+    ggplot(data = data_melt, aes(x = Category, y = Copies, color = Category)) +
+        geom_jitter(shape=1, position=position_jitter(0.4), alpha = 0.3, size = 0.3) +
+        geom_violin(trim = F, scale = "width", alpha = 0.5, linewidth = 0.2) +
+        scale_color_brewer(palette="Set1") +
+        scale_y_continuous(breaks = seq(0, 20, 1), limits = c(0, 20)) +
+        theme_bw() +
+        theme(legend.position = "top",
+              legend.justification = "right",
+              legend.box = "horizontal")
+    
+    ggsave(paste("output/", out, ".pdf", sep = "" ), height = 5, width = 3)
+    ggsave(paste("output/", out, ".png", sep = "" ), height = 5, width = 3)
+}
+
+dat=read.table("input/inova.copynum_dip.4187.txt", header = T)
+head(dat)
+
+plot_one_dist(dat, "count_dist_DJ", "DJ")
+plot_one_dist(dat, "count_dist_PHR", "Chr13_PHR_arm1")
+
+
 plot_dist <- function(dat = null, out) {
     
     dat_DJ_PHR = dat %>% select(Sample, DJ, Chr13_PHR_arm1) # , Chr13_PHR_arm1, Chr13_PHR_arm2)
@@ -30,8 +63,7 @@ plot_dist <- function(dat = null, out) {
     ggsave(paste("output/", out, ".png", sep = "" ), height = 3.5, width = 3)
 }
 
-dat=read.table("input/inova.copynum_dip.4187.txt", header = T)
-head(dat)
+
 plot_dist(dat, "count_dist_DJ_PHR")
 
 # awk 'NR==1 || $NF>3.2 && $NF<4.2' inova.copynum_dip.txt > inova.copynum_dip.PHR_4.txt
@@ -46,6 +78,8 @@ plot_dist(dat, "count_dist_DJ_PHR_ROB")
 
 
 
+
+
 # Plot rDNA CN count
 max(dat$rDNA)
 
@@ -55,10 +89,6 @@ ggplot(data = dat, aes(x = "rDNA", y = rDNA, color = "rDNA")) +
     geom_jitter(shape=1, position=position_jitter(0.3)) +
     scale_color_brewer(palette="Set1") +
     ylim(0, 700)
-
-
-
-
 
 
 ##### Backup ######
