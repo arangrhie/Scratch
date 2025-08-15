@@ -36,6 +36,12 @@ head(dat)
 plot_one_dist(dat, "count_dist_DJ", "DJ")
 plot_one_dist(dat, "count_dist_PHR", "Chr13_PHR_arm1")
 
+dat=read.table("input/inova.copynum_dip.4187.rob.txt", header = T)
+plot_one_dist(dat, "count_dist_PHR_in_ROBs", "Chr13_PHR_arm1")
+
+dat=read.table("input/inova.copynum_dip.4187.DJ_9.txt", header = T)
+plot_one_dist(dat, "count_dist_PHR_in_DJ9", "Chr13_PHR_arm1")
+
 
 plot_dist <- function(dat = null, out) {
     
