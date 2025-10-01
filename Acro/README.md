@@ -1,4 +1,6 @@
-# T2T-Ref Figures
+# Acro figure for poster
+
+GRCh38 Issues, CenSat, Synteny, and accessibility mask for short-reads
 
 ## Original tracks
 
@@ -32,8 +34,8 @@ scp helix.nih.gov:/data/Phillippy2/projects/T2T-Browser/incoming/accessability/*
 
 * Plot with `plot_karyo.R`
 * Output: `output/chm13v2.0_accessibility_legend.png` and `output/chm13v2.0_accessibility.png`
-![chm13v2.0_accessibility_legend.png](../output/chm13v2.0_accessibility_legend.png)
-![chm13v2.0_accessibility.png](../output/chm13v2.0_accessibility.png)
+![chm13v2.0_accessibility_legend.png](output/chm13v2.0_accessibility_legend.png)
+![chm13v2.0_accessibility.png](output/chm13v2.0_accessibility.png)
 
 ## DJ and PHR diagram
 
